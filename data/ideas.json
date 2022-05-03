@@ -1,0 +1,121 @@
+[
+  {  
+    "title": "Dance Compass",
+    "description": "Whether you are near or far from home, if dance is the language of your soul, follow your own Dance Compass, and you will never be lost. Any user can search for dance classes by city with options to filter by date, distance, and style of dance. They can find classes happening today or next month, where they are or where they plan to be. Users who create an account with Dance Compass can save the classes that they are interested into their profile to access at any time, keep track of the specific classes they've attended, and see a chart analysis of the number of classes they've attended each month. Dancers now have a source to count on to keep abreast of dance classes all over.",
+    "link": "https://github.com/kdoby/HB-Web-App-Project",
+    "modified": "2019-03-20"
+  },
+  { 
+    "title": "RunBuddy",
+    "description": "Built a full-stack web app that allows people to search for running buddies based on distance from their entered location and desired running pace. The app includes messaging as well as results displayed on a map.",
+    "link": "https://github.com/kirbsrh/runbuddy_project",
+    "modified": "2019-03-13"
+  },
+  { 
+    "title": "Sum Blocks",
+    "description": "Sum Blocks is a cryptocurrency wallet aggregator, where a user can track portfolio value for wallets on both the Bitcoin and Ethereum blockchains. Sum Blocks takes publicly available blockchain data to sort through transactions and convert any currency in the wallet to a base currency of Bitcoin. Using an exchange rate API, Sum Blocks refreshes Bitcoin exchange rates every 30 seconds. With Sum Blocks, a user can save their wallets to their portfolio and have the value automatically updated with real-time information when they log-in.",
+    "link": "https://github.com/KGmajor/PROJECTSUMBLOCKS",
+    "modified": "2019-03-15"
+  },
+  { 
+    "title": "Waste Not, Want Noms",
+    "description": "Full-stack web application to aid in consuming available ingredients to combat food waste. Flask based application takes in user-specified ingredients and minimum and maximum quantity requirements. Application interfaces with 3rd party REST APIs to gather recipes and back-end logic filters recipes according to user input. Recipes displayed to the user will be those that satisfy the user's goals.",
+    "link": null,
+    "modified": "2019-03-22"
+  },
+  { 
+    "title": "Discover San Francisco",
+    "description": "Discover San Francisco is a full-stack web application that allows users to learn more about the city. Users can learn about the various neighborhoods and discover “things to do.” The neighborhoods and their data are stored in a PostgreSQL database. The Yelp API is used to display the top 5 most popular restaurants in each neighborhood and the Google Maps API is used to mark the location of each tourist attraction. Users can even contribute their thoughts by creating an account to comment and rate.",
+    "link": "https://github.com/jessicahojh/San_Francisco_Webpage_Project",
+    "modified": "2019-03-22"
+  },
+  { 
+    "title": "CandiDATA",
+    "description": "CandiDATA is a web-based app that provides a breakdown and data visualizations of reported campaign finances for the 2018 Congressional races and allows users to search for candidates and the entities that contributed to their campaigns.",
+    "link": "https://github.com/katiepat/candidata.git",
+    "modified": "2019-03-25"
+  },
+  { 
+    "title": "Over The Mood",
+    "description": "Over The Mood aims to improve mental health by determining which activities elicit positive moods and which trigger negative moods. Users add a mood entry which includes a mood and any number of selected activities. Users are able to view a log of all their entries including two visualizations- one for mood over time and another for total mood count. Moreover, users are able to view activities associated with specific moods. Lastly, users can dump their feelings and save it to their profile- similar to journal entries -- which can be analyzed for positive or negative sentiment.",
+    "link": "https://github.com/lizlaw13/final-project",
+    "modified": "2019-03-14"
+  },
+  { 
+    "title": "Via",
+    "description": "Via turns wanderlust into action. Adventurers can geocode URLs from travel articles, save them to a personal bucket list travel map, and create custom itineraries designed for efficiency inspired by the traveling salesman problem.",
+    "link": "https://github.com/erinforman/via",
+    "modified": "2019-03-04"
+  },
+  { 
+    "title": "Hike Every Weekend",
+    "description": "Hike Every Weekend is a full-stack web app that sends hike trails recommendation through a text message using Twilio API to users every Saturday morning. Users are able to create and modify their own favorite list of trails as well as view nearby trails on a map using Google maps javascript API. Integration with the Yelp API allows users to access more information about a given trail and get directions to their favorite trail.",
+    "link": "https://github.com/fatimasalmanmirza/project-hiking-trails",
+    "modified": "2019-03-07"
+  },
+  { 
+    "title": "Knit It",
+    "description": "Knit It’ is a single-page web app that allows a user to search and browse knitting patterns available on ravelry.com. Users can register and log in, and if a user is logged in they can add, remove and browse patterns from their favorites list. The app is organized following an MVC pattern. To get knitting patterns, React components use real-time ajax calls to my server which calls the Ravelry API. Controller classes extract the information needed from the API response and compose a meaningful result object which will then get returned to the frontend. The only information stored in my DB is related to the user and their favorites list. This way I can ensure that my app always serves the most up-to-date knitting pattern information.",
+    "link": "https://github.com/finasilvasantiste/hackbright__knit_it",
+    "modified": "2019-03-17"
+  },
+  { 
+    "title": "PinTrip",
+    "description": "PinTrip is a mashup of Pinterest and Flickr to help users find photos of interesting places to see on their next trip. Users can create or remove their own personalized 'trip board' for each city they are interested in visiting. After a board has been created, users can search for photos with geotags in their chosen city and add or remove photos to and from the trip board. Once photos have been added, users can view a map of their trip which pins all of the saved photo locations.",
+    "link": "https://github.com/jenihuang/HB_Project_PinTrip",
+    "modified": "2019-03-09"
+  },
+  { 
+    "title": "Vibez",
+    "description": "Vibez is a web application that utilizes Spotify's API to generate playlists based on a user's choice of genre and minimum and maximum range of danceability levels (0 - 1). Once a playlist has been generated, Vibez gathers and stores the playlist's history in a PostgreSQL database along with information for the three audio features. Once a Spotify API request is made, Vibez integrates the JSON into the frontend using the Amplitude.js library to showcase its lists of songs and its accompanying shuffle, skip, adjustable volume, scroll, and other convenient functions. In order to display a page of stored playlists, Vibez assimilates interactive, complex visuals rendered by code that is extracted and refactored from the D3.js library.",
+    "link": "https://github.com/surferJen/vibez",
+    "modified": "2018-03-11"
+  },
+  { 
+    "title": "Gadget",
+    "description": "Gadget is an app that allows for flexible and intuitive searching of skincare products, and flags products that contain potentially harmful or undesirable ingredients. There are two built in flags, one for ingredients that are potentially harmful during pregnancy and one for ingredients that can aggravate sensitive skin. Users can also create custom flags with the help of approximate string matching, and can enable and disable flags at any time.",
+    "link": "https://github.com/agstaples/hackbright-skincare?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-24"
+  },
+  { 
+    "title": "Pawfect Match",
+    "description": "Pawfect Match is a web application that recommends dog breeds based on a user's lifestyle and preferred dog traits. After users take a quiz, the inputs are sent to the extensive database that holds information (descriptions, traits, and scores) on over 200 dog breeds. This results in the top dog matches from which the user can then read more about. At the same time, the app uses Petfinder's API to search and return adoptable pets, helping the user find a furry companion!",
+    "link": "https://github.com/alvarezcindy/pawfectmatch?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-22"
+  },
+  { 
+    "title": "Voter Information Project",
+    "description": "The Voter Information Project or V.I.P. is a tool intended to provide a user with non-partisan data about their federal congresspeople, recent bills authored, and how those bills were voted on. The V.I.P. gives non-judgmental information, and does not tell the user how to vote. By providing purely factual information, the user is trusted to determine their opinion about the bill without having to worry about unfair biases. The site provides contact information for their congresspeople to encourage democratic participation.\n The hope for this project is so every person can be able to make well informed decisions about the people they vote for, as well gain awareness about the laws being addressed by Congress.",
+    "link": "https://github.com/ioneaxelrod/voter-info?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-22"
+  },
+  { 
+    "title": "JobTracker",
+    "description": "JobTracker helps users track status of job applications, store details about companies and contacts, and remember follow up items. After registration, the user adds jobs to track with initial status, and then can find the average salary for the job type in their local metro area with data from Glassdoor’s Local Pay Reports research. Every status update assigns new follow up tasks to the user to complete by a due date. These tasks can be added to their calendar via Google’s OAuth2 authentication system for the Google API. The user can also track interactions with contacts during networking events or informational interviews. The profile page details the user’s analytics from number of jobs interested in to the number of job offers.",
+    "link": "https://github.com/mearajennifer/jobtracker?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-05"
+  },
+  { 
+    "title": "Skillin it",
+    "description": "Skillin it is a career development website revolved around the skills needed for a career direction. The app finds the most requested skills in a giant dataset of job postings and gives users visual data about those skills. The app is intended for people entering a new career field and need direction. The user can use this tool to begin their new career change transition before they know which company they want to work for.",
+    "link": "https://github.com/kamikarras/Skillin-it?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-20"
+  },
+  { 
+    "title": "Pixel Stitch",
+    "description": "Pixel stitch lets users create a knitting pattern, and shows them what it would look like as they create it. Users create patterns by typing instructions for each row, and the image is generated as they go. They can change and add colors, use different stitches, and add or remove rows to create their finished motif. They can also click on a row of either the text or the image, and it highlights both the text and image of that row, to help fine-tune their creation. When the user is happy with what they've made they can name and save it. Users can also search for other people's patterns by name, or browse all patterns. When users find patterns they like they can mark it as favorite and access it later.",
+    "link": "https://github.com/KristinEliseLee/hackbright-project-knitting?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-29"
+  },
+  { 
+    "title": "Carrot, a behavior intervention tool",
+    "description": "Carrot is an intervention tool aimed at teachers and parents to monitor targeted student behaviors with specific interventions and dynamically chart progress over time. Users register and add students they would like to monitor. They can then identify behaviors they would like to target and choose associated interventions. Users can target multiple behaviors for each student and enter multiple progress reports to gauge the success of the intervention. Student progress is dynamically charted to visualize progress and the intersection of multiple behaviors. With the click of a button, users can text progress reports and comments to parents to facilitate collaboration between families and schools.",
+    "link": "https://github.com/lahorton/behavior_project?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-13"
+  },
+  { 
+    "title": "National Disaster Declarations",
+    "description": "This project’s goal was to explore improving the user experience when an app is data-heavy. The intended audience are those interested in education or government run conservation programs. FEMA’s database on disaster declarations was used because disasters garner a lot of media coverage today. Having greater awareness of the risk and impact of disasters is critical to lessening their effect in the future. So, an added feature is the user’s ability to save events either for educational or personal purposes. The future goal is to improve in conveying data trends without having to display the raw data so that this project may one day have a larger effect beyond the intended audience.",
+    "link": "https://github.com/rachel-lynch-lin/fema-disasters?utm_source=hackbright&utm_medium=blog&utm_campaign=margaret%20graduation&utm_content=09062018",
+    "modified": "2018-09-16"
+  }]
