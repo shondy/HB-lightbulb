@@ -1,71 +1,29 @@
 """CRUD operations."""
 
-from model import db, User, Movie, Rating, connect_to_db
+from model import db, User, Idea, Vote, Comment, connect_to_db
+from sqlalchemy import func, case
+
+def get_ideas_with_votes(user_id, page, per_page):
+    """Return all ideas with total votes and votes made by user on the page."""
+    if user_id is None:
+        ideas_with_votes = db.session.query(
+            Idea.idea_id, 
+            Idea.title, 
+            func.count(Vote.vote_id).label("total_votes")
+            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id).paginate(page, per_page, error_out = False)
 
 
-def create_user(email, password):
-    """Create and return a new user."""
-
-    user = User(email=email, password=password)
-
-    return user
-
-
-def get_users():
-    """Return all users."""
-
-    return User.query.all()
+    else:
+        ideas_with_votes = db.session.query(
+            Idea.idea_id, 
+            Idea.title, 
+            func.count(Vote.vote_id).label("total_votes"),
+            func.count(case(
+            [((Vote.user_id == user_id), 1)])).label("user_vote")
+            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id).paginate(page, per_page, error_out = False)
 
 
-def get_user_by_id(user_id):
-    """Return a user by primary key."""
-
-    return User.query.get(user_id)
-
-
-def get_user_by_email(email):
-    """Return a user by email."""
-
-    return User.query.filter(User.email == email).first()
-
-
-def create_movie(title, overview, release_date, poster_path):
-    """Create and return a new movie."""
-
-    movie = Movie(
-        title=title,
-        overview=overview,
-        release_date=release_date,
-        poster_path=poster_path,
-    )
-
-    return movie
-
-
-def get_movies():
-    """Return all movies."""
-
-    return Movie.query.all()
-
-
-def get_movie_by_id(movie_id):
-    """Return a movie by primary key."""
-
-    return Movie.query.get(movie_id)
-
-
-def create_rating(user, movie, score):
-    """Create and return a new rating."""
-
-    rating = Rating(user=user, movie=movie, score=score)
-
-    return rating
-
-
-def update_rating(rating_id, new_score):
-    """ Update a rating given rating_id and the updated score. """
-    rating = Rating.query.get(rating_id)
-    rating.score = new_score
+    return ideas_with_votes
 
 if __name__ == "__main__":
     from server import app

@@ -13,27 +13,39 @@ class User(db.Model):
     __tablename__ = "users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
 
     # ratings = a list of Rating objects
 
     def __repr__(self):
-        return f"<User user_id={self.user_id} email={self.email}>"
+        return f"<User user_id={self.user_id} username={self.username} email={self.email}>"
 
     @classmethod
-    def create(cls, email, password):
+    def create(cls, email, username, password):
        """Create and return a new user."""
 
-       return cls(email=email, password=password)
+       return cls(email=email, username=username, password=password)
 
     @classmethod
     def get_by_id(cls, user_id):
+        """Return a user by primary key."""
+
         return cls.query.get(user_id)
 
     @classmethod
     def get_by_email(cls, email):
-        return cls.query.filter(User.email == email).first()
+        """Return a user by email."""
+
+        return cls.query.filter_by(email=email).first()
+    
+    @classmethod
+    def get_by_username(cls, username):
+        """Return a user by username."""
+
+        return cls.query.filter_by(username=username).first()
+
 
     @classmethod
     def all_users(cls):
@@ -46,8 +58,8 @@ class Idea(db.Model):
     __tablename__ = "ideas"
 
     idea_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String(100))
-    description = db.Column(db.Text)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
     link = db.Column(db.String(200), nullable=True)
     modified = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
@@ -88,8 +100,14 @@ class Idea(db.Model):
         return cls.query.all()
 
     @classmethod
+    def get_ideas_per_page(cls, page, per_page):
+        """Return all ideas on the page."""
+
+        return cls.query.paginate(page, per_page, error_out = False)
+
+    @classmethod
     def get_by_id(cls, idea_id):
-        """Return a movie by primary key."""
+        """Return an idea by primary key."""
 
         return cls.query.get(idea_id)
 
@@ -127,6 +145,11 @@ class Vote(db.Model):
     def get_by_user_id(cls, user_id):
         return cls.query.filter(Vote.user_id == user_id).all()
 
+    @classmethod
+    def get_by_user_id_and_idea_id(cls, user_id, idea_id):
+        return cls.query.filter(Vote.user_id == user_id, Vote.idea_id == idea_id).first()
+
+
     
 
 class Comment(db.Model):
@@ -135,7 +158,7 @@ class Comment(db.Model):
     __tablename__ = "comments"
 
     comment_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    description = db.Column(db.Text)
+    description = db.Column(db.Text, nullable=False)
     modified = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     idea_id = db.Column(db.Integer, db.ForeignKey("ideas.idea_id"))

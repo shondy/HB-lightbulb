@@ -1,26 +1,30 @@
 {% extends 'base.html' %}
-{% block title %}Movie Ratings Home{% endblock %}
+{% block title %}Project Ideas Home{% endblock %}
 
 {% block body %}
   <div class="container-fluid">
-    <div class="row">
-      
+
+    <div class="row">      
       <h1>From mind to design in minutes</h1>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 col-lg-6">
         <p>
           Lightbulb is a free, easy-to-use web app where you can find ideas for your future project, 
           see which project could be the most demanding one, 
           add your ideas and get feedback from the community, share yout thoughts about ideas of others.
         </p>
         <div>
-          <a title="Project ideas" href="/ideas">Project ideas</a>
-          <a title="Join community" href="/login">Join community</a>
+          <a class="btn btn-primary" href="/ideas" role="button">Look through ideas</a>
+          <a class="btn btn-primary" href="/users" role="button">Join your community</a>
+          
   
         </div>
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 col-lg-3">
         <img src="/static/img/lightbulb.jpg">
       </div>
     </div>
+
   </div>
+
+  <script src="/static/js/login.js"></script>
 {% endblock %}

@@ -17,14 +17,15 @@ model.db.create_all()
 # Create 10 users
 users_in_db = []
 for n in range(10):
+    username = f"test{n}"
     email = f"user{n}@test.com"
     password = f"test{n}"
 
-    db_user = model.User.create(email, password)
+    db_user = model.User.create(email, username, password)
     users_in_db.append(db_user)
 
 model.db.session.add_all(users_in_db)
-print("users--------------------------->", users_in_db)
+# print("users--------------------------->", users_in_db)
 
 # Load ideas data from JSON file
 with open("data/ideas.json") as f:

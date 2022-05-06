@@ -1,16 +1,53 @@
 {% extends 'base.html' %}
-{% block title %}All Movies{% endblock %}
+{% block title %}All Ideas{% endblock %}
 
 {% block body %}
-  <h1>All Movies</h1>
+  <h1>All Ideas</h1>
 
-  <ul>
-    {% for idea in ideas %}
-      <li>
-        <a href="/ideas/{{ idea.idea_id }}">
-          {{ idea.title }}
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
+  <form action="/ideas">
+    <select name="per_page">
+      <option value="5"{% if per_page == 5 %} selected="selected"{% endif %}>5</option>
+      <option value="10" {% if per_page == 10 %} selected="selected"{% endif %}>10</option>
+      <option value="20" {% if per_page == 20 %} selected="selected"{% endif %}>20</option>
+    </select>
+    <input type="submit" value="Results per page">
+  </form>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Ideas</th>
+        <th scope="col">Votes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for idea in ideas.items %}
+      <tr>
+        <td>
+          <a href="/ideas/{{ idea.idea_id }}">
+            {{ idea.title }}
+          </a>
+        </td>
+        <td>
+          {% if session.get('user_id') %}          
+            {% if idea.user_vote == 1 %}                
+              <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: green"></i></a>
+            {% else %}
+              <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: lightgray"></i></a>
+            {% endif %}
+          {% endif %}
+          <span class='total-votes {{idea.idea_id}}'>{{ idea.total_votes }}</span> votes 
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  
+  <a href="/ideas?page={{ 1 }}&per_page={{ per_page }}"> First </a> |
+  {% if ideas.has_prev %}<a href="/ideas?page={{ ideas.prev_num }}&per_page={{ per_page }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
+  {% if ideas.has_next %}<a href="/ideas?page={{ ideas.next_num }}&per_page={{ per_page }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
+  <a href="/ideas?page={{ ideas.pages }}&per_page={{ per_page }}"> Last </a>
+  
+  <script src="/static/js/handleVote.js"></script>
 {% endblock %}

@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, flash, session, redirect
 from model import connect_to_db, db, User, Idea, Vote, Comment
 
 from jinja2 import StrictUndefined
+import crud
 
 app = Flask(__name__)
 app.secret_key = "dev"
@@ -16,50 +17,145 @@ def homepage():
 
     return render_template("homepage.html")
 
-# @app.route("/movies")
-# def all_movies():
-#     """View all movies."""
+@app.route("/ideas")
+def ideas_per_page():
+    """View all ideas with pagination."""
 
-#     movies = Movie.all_movies()
+    page = int(request.args.get("page", "1"))
+    per_page = int(request.args.get("per_page", "5"))
 
-#     return render_template("all_movies.html", movies=movies)
+    # ideas = Idea.get_ideas_per_page(page, per_page)
+    ideas_with_votes = crud.get_ideas_with_votes(session.get("user_id"), page, per_page)
 
+    return render_template("all_ideas.html", ideas=ideas_with_votes, per_page=per_page)
 
-# @app.route("/movies/<movie_id>")
-# def show_movie(movie_id):
-#     """Show details on a particular movie."""
+@app.route("/ideas/<idea_id>")
+def show_idea(idea_id):
+    """Show details on a particular idea with all comments."""
 
-#     movie = Movie.get_by_id(movie_id)
+    idea = Idea.get_by_id(idea_id)
+    comments = Comment.get_by_idea_id(idea_id)
 
-#     return render_template("movie_details.html", movie=movie)
-
-
-# @app.route("/users")
-# def all_users():
-#     """View all users."""
-
-#     users = User.all_users()
-
-#     return render_template("all_users.html", users=users)
+    return render_template("idea_details.html", idea=idea, comments=comments)
 
 
-# @app.route("/users", methods=["POST"])
-# def register_user():
-#     """Create a new user."""
+@app.route("/login", methods=['GET', 'POST'])
+def process_login():
+    """Process user login."""
 
-#     email = request.form.get("email")
-#     password = request.form.get("password")
+    if request.method == 'POST':
+        email = request.form.get("email")
+        password = request.form.get("password")
 
-#     user = User.get_by_email(email)
-#     if user:
-#         flash("Cannot create an account with that email. Try again.")
-#     else:
-#         user = User.create(email, password)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash("Account created! Please log in.")
+        user = User.get_by_email(email)
+        print("user--------------->", user)
+        if not user or user.password != password:
+            flash("The email or password you entered was incorrect.")
+            return redirect("/login")
+        
+        # Log in user by storing the user's email in session
+        session["user_id"] = user.user_id
+        flash(f"Welcome back, {user.username}!")
 
-#     return redirect("/")
+        return redirect("/")
+    else:
+        return render_template("login.html")
+
+@app.route("/logout")
+def process_logout():
+    """Process user logout."""
+
+    session.pop('user_id')
+    return redirect("/")
+    
+
+
+@app.route("/users", methods=['GET', 'POST'])
+def register_user():
+    """Handling the creation of a new user."""
+
+    if request.method == 'POST':
+        username = request.form.get("username")
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        user = User.get_by_username(username)
+        if user:
+            flash(f"Username {username} is already taken. Try again.")
+            return redirect("/users")
+
+        user = User.get_by_email(email)
+        if user:
+            flash(f"Accont with email {email} already exists. Try again.")
+            return redirect("/users")
+        
+        user = User.create(username, email, password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Account created! Please log in.")
+
+        return redirect("/login")
+
+    else:
+        return render_template("users.html")
+
+@app.route("/comments", methods=['GET', 'POST'])
+def create_comment():
+    """Create a new comment."""
+
+    if request.method == 'POST':
+        user = User.get_by_id(session["user_id"])
+        idea_id = request.form.get("idea_id")
+        idea = Idea.get_by_id(idea_id)
+        description = request.form.get("description")
+        
+        comment = Comment.create(user, idea, description)
+        db.session.add(comment)
+        db.session.commit()
+        
+        return "<script>window.onload = window.close();</script>"
+
+    else:
+        idea_id = int(request.args.get("idea_id"))
+        idea = Idea.get_by_id(idea_id)
+
+        return render_template("comment_details.html", idea=idea)
+
+
+@app.route("/votes", methods=['POST'])
+def create_vote():
+    """Create a vote."""
+
+    idea_id = request.json.get("idea_id")
+    idea = Idea.get_by_id(idea_id)
+
+    user_id = session["user_id"]
+    user = User.get_by_id(user_id)
+    
+    vote = Vote.create(user, idea)
+    db.session.add(vote)
+    db.session.commit()
+
+    return {
+        "success": True, 
+        "status": f"Your vote for idea {idea.idea_id} was added"}
+
+@app.route("/votes", methods=['DELETE'])
+def delete_vote():
+    """delete a vote."""
+
+    idea_id = request.json.get("idea_id")
+    user_id = session["user_id"]
+    
+    
+    vote = Vote.get_by_user_id_and_idea_id(user_id, idea_id)
+    db.session.delete(vote)
+    db.session.commit()
+
+    return {
+        "success": True, 
+        "status": f"Your vote for idea {idea_id} was deleted"}
+  
 
 
 # @app.route("/users/<user_id>")
@@ -71,22 +167,7 @@ def homepage():
 #     return render_template("user_details.html", user=user)
 
 
-# @app.route("/login", methods=["POST"])
-# def process_login():
-#     """Process user login."""
 
-#     email = request.form.get("email")
-#     password = request.form.get("password")
-
-#     user = User.get_by_email(email)
-#     if not user or user.password != password:
-#         flash("The email or password you entered was incorrect.")
-#     else:
-#         # Log in user by storing the user's email in session
-#         session["user_email"] = user.email
-#         flash(f"Welcome back, {user.email}!")
-
-#     return redirect("/")
 
 # @app.route("/update_rating", methods=["POST"])
 # def update_rating():
