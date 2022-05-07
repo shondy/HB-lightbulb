@@ -22,6 +22,9 @@
     <li>
       <p>{{ comment.user.username }}</p>
       {{ comment.description }}
+      {% if session.get('user_id') and comment.user_id == session['user_id'] %}
+      <button type="button" class="btn btn-secondary btn-sm edit-comment" id="{{ comment.comment_id}}">Edit</button>
+      {% endif %}
       </a>
     </li>
   {% endfor %}

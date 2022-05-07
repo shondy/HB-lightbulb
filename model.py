@@ -191,6 +191,12 @@ class Comment(db.Model):
         comment.modified = datetime.now()
 
     @classmethod
+    def get_by_id(cls, comment_id):
+        """Return a comment by primary key."""
+
+        return cls.query.get(comment_id)
+
+    @classmethod
     def get_by_idea_id(cls, idea_id):
         return cls.query.filter(Comment.idea_id == idea_id).all()
 

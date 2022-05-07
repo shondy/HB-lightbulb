@@ -9,6 +9,7 @@ formCommentDetails.addEventListener('submit', (evt) => {
   let comment_id;
   if (method === 'PUT') {
     comment_id = document.querySelector('#comment_id').value;
+    console.log("comment_id = ", comment_id);
   }
   // opener property returns a reference to the window that opened the window,
   // this window has script with addComments.js

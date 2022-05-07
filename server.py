@@ -46,7 +46,6 @@ def process_login():
     if request.method == 'POST':
         email = request.form.get("email")
         password = request.form.get("password")
-
         user = User.get_by_email(email)
         print("user--------------->", user)
         if not user or user.password != password:
@@ -139,7 +138,7 @@ def edit_comment(idea_id, comment_id):
         
         return {
             "success": True, 
-            "status": f"Your comment for idea {idea.idea_id} was added"}
+            "status": f"Your comment for idea {idea_id} was added"}
     
     else:
         """Show template for editing a comment."""
