@@ -99,27 +99,56 @@ def register_user():
     else:
         return render_template("users.html")
 
-@app.route("/comments", methods=['GET', 'POST'])
-def create_comment():
-    """Create a new comment."""
+@app.route("/comments/<idea_id>", methods=['GET', 'POST'])
+def create_comment(idea_id):
+    """Create, update, read a comment."""
 
     if request.method == 'POST':
+        """Create a new comment."""
+
         user = User.get_by_id(session["user_id"])
-        idea_id = request.form.get("idea_id")
         idea = Idea.get_by_id(idea_id)
-        description = request.form.get("description")
+        description = request.json.get("description")
         
         comment = Comment.create(user, idea, description)
         db.session.add(comment)
         db.session.commit()
         
-        return "<script>window.onload = window.close();</script>"
-
+        return {
+            "success": True, 
+            "status": f"Your comment for idea {idea.idea_id} was added"}
+    
     else:
-        idea_id = int(request.args.get("idea_id"))
+        """Show template for creating a comment"""
+
         idea = Idea.get_by_id(idea_id)
 
-        return render_template("comment_details.html", idea=idea)
+        return render_template("comment_details.html", idea=idea, method="POST")
+
+@app.route("/comments/<idea_id>/<comment_id>", methods=['GET', 'PUT'])
+def edit_comment(idea_id, comment_id):
+
+    if request.method == 'PUT':
+        """Update a comment."""
+
+        comment = Comment.get_by_id(comment_id)
+        description = request.json.get("description")
+        
+        comment.description = description
+        db.session.commit()
+        
+        return {
+            "success": True, 
+            "status": f"Your comment for idea {idea.idea_id} was added"}
+    
+    else:
+        """Show template for editing a comment."""
+
+        idea = Idea.get_by_id(idea_id)
+        comment = Comment.get_by_id(comment_id)
+
+        return render_template("comment_details.html", idea=idea, comment=comment, method="PUT")
+
 
 
 @app.route("/votes", methods=['POST'])
