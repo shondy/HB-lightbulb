@@ -1,7 +1,8 @@
 """Server for movie ratings app."""
 
-from flask import Flask, render_template, request, flash, session, redirect
+from flask import Flask, render_template, request, flash, session, redirect, jsonify, abort
 from model import connect_to_db, db, User, Idea, Vote, Comment
+from sqlalchemy import exc
 
 from jinja2 import StrictUndefined
 import crud
@@ -17,7 +18,7 @@ def homepage():
 
     return render_template("homepage.html")
 
-@app.route("/ideas")
+@app.route("/all-ideas")
 def ideas_per_page():
     """View all ideas with pagination."""
 
@@ -29,14 +30,71 @@ def ideas_per_page():
 
     return render_template("all_ideas.html", ideas=ideas_with_votes, per_page=per_page)
 
-@app.route("/ideas/<idea_id>")
+@app.route("/ideas", methods=['GET', 'POST'])
+def create_idea():
+    """handle creating an idea."""
+
+    if request.method == 'POST':
+        """Create a new idea."""
+
+        user = User.get_by_id(session["user_id"])
+        title = request.form.get("title")
+        description = request.form.get("description")
+        link = request.form.get("link")
+        
+        idea = Comment.create(user, title, description, link)
+        try:
+            db.session.add(idea)
+            db.session.commit()
+            flash(f"Your idea was created!")
+            return redirect("/all-ideas")
+
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
+    
+    else:
+        """Show template for creating an idea"""
+
+        return render_template("idea_details.html")
+
+@app.route("/ideas/<idea_id>", methods=['GET', 'PUT'])
+def edit_idea(idea_id):
+    """Handling changing an idea """
+
+    idea = Idea.get_by_id(idea_id)
+
+    if request.method == 'PUT':
+        """Update an idea."""
+
+        title = request.form.get("title")
+        description = request.form.get("description")
+        link = request.form.get("link")
+
+        idea.title = title
+        idea.description = description
+        idea.link = link
+  
+        try:
+            db.session.commit()
+            return redirect(f"/ideas/{idea_id}/comments")
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
+
+    else:
+        """Show template for editing an idea."""
+
+        return render_template("idea_details.html", idea=idea)
+
+@app.route("/ideas/<idea_id>/comments")
 def show_idea(idea_id):
     """Show details on a particular idea with all comments."""
 
     idea = Idea.get_by_id(idea_id)
     comments = Comment.get_by_idea_id(idea_id)
 
-    return render_template("idea_details.html", idea=idea, comments=comments)
+    return render_template("idea_details_with_comments.html", idea=idea, comments=comments)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -71,7 +129,7 @@ def process_logout():
 
 @app.route("/users", methods=['GET', 'POST'])
 def register_user():
-    """Handling the creation of a new user."""
+    """Handle creating of a new user."""
 
     if request.method == 'POST':
         username = request.form.get("username")
@@ -89,18 +147,23 @@ def register_user():
             return redirect("/users")
         
         user = User.create(username, email, password)
-        db.session.add(user)
-        db.session.commit()
-        flash("Account created! Please log in.")
+        
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash("Account created! Please log in.")
+            return redirect("/login")
 
-        return redirect("/login")
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
 
     else:
         return render_template("users.html")
 
 @app.route("/comments/<idea_id>", methods=['GET', 'POST'])
 def create_comment(idea_id):
-    """Create, update, read a comment."""
+    """handle creating a comment."""
 
     if request.method == 'POST':
         """Create a new comment."""
@@ -110,12 +173,17 @@ def create_comment(idea_id):
         description = request.json.get("description")
         
         comment = Comment.create(user, idea, description)
-        db.session.add(comment)
-        db.session.commit()
-        
-        return {
-            "success": True, 
-            "status": f"Your comment for idea {idea.idea_id} was added"}
+        try:
+            db.session.add(comment)
+            db.session.commit()
+            return {
+                "success": True, 
+                "added": comment.comment_id
+                }
+
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
     
     else:
         """Show template for creating a comment"""
@@ -124,30 +192,48 @@ def create_comment(idea_id):
 
         return render_template("comment_details.html", idea=idea, method="POST")
 
-@app.route("/comments/<idea_id>/<comment_id>", methods=['GET', 'PUT'])
+@app.route("/comments/<idea_id>/<comment_id>", methods=['GET', 'PUT', 'DELETE'])
 def edit_comment(idea_id, comment_id):
+    """handle changing a comment."""
+
+    comment = Comment.get_by_id(comment_id)
 
     if request.method == 'PUT':
         """Update a comment."""
 
-        comment = Comment.get_by_id(comment_id)
         description = request.json.get("description")
-        
         comment.description = description
-        db.session.commit()
+  
+        try:
+            db.session.commit()
+            return jsonify({ 
+                "success": True,
+                "udated": comment.comment_id
+            })
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
+
+    elif request.method == 'DELETE':
+        """Delete a comment."""
+
+        try:
+            db.session.delete(comment)
+            db.session.commit()
+            return jsonify({ 
+                "success": True,
+                "deleted": comment_id
+            })
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
         
-        return {
-            "success": True, 
-            "status": f"Your comment for idea {idea_id} was added"}
-    
     else:
         """Show template for editing a comment."""
 
         idea = Idea.get_by_id(idea_id)
-        comment = Comment.get_by_id(comment_id)
 
         return render_template("comment_details.html", idea=idea, comment=comment, method="PUT")
-
 
 
 @app.route("/votes", methods=['POST'])
@@ -161,12 +247,17 @@ def create_vote():
     user = User.get_by_id(user_id)
     
     vote = Vote.create(user, idea)
-    db.session.add(vote)
-    db.session.commit()
+    try:
+        db.session.add(vote)
+        db.session.commit()
+        return jsonify({ 
+            "success": True,
+             "added": vote.vote_id
+        })
+    except exc.SQLAlchemyError as err:
+        db.session.rollback()
+        abort(422)
 
-    return {
-        "success": True, 
-        "status": f"Your vote for idea {idea.idea_id} was added"}
 
 @app.route("/votes", methods=['DELETE'])
 def delete_vote():
@@ -177,57 +268,60 @@ def delete_vote():
     
     
     vote = Vote.get_by_user_id_and_idea_id(user_id, idea_id)
-    db.session.delete(vote)
-    db.session.commit()
+    print("vote=======================", vote)
+    vote_id = vote.vote_id
 
-    return {
-        "success": True, 
-        "status": f"Your vote for idea {idea_id} was deleted"}
-  
-
-
-# @app.route("/users/<user_id>")
-# def show_user(user_id):
-#     """Show details on a particular user."""
-
-#     user = User.get_by_id(user_id)
-
-#     return render_template("user_details.html", user=user)
+    try:
+        db.session.delete(vote)
+        db.session.commit()
+        return jsonify({ 
+            "success": True,
+             "deleted": vote_id
+        })
+    except exc.SQLAlchemyError as err:
+        db.session.rollback()
+        abort(422)
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "resource not found"
+    }), 404
 
+@app.errorhandler(422)
+def unprocessable(error):
+    return jsonify({
+        "success": False,
+        "error": 422,
+        "message": "unprocessable"
+    }), 422
 
-# @app.route("/update_rating", methods=["POST"])
-# def update_rating():
-#     rating_id = request.json["rating_id"]
-#     updated_score = request.json["updated_score"]
-#     Rating.update(rating_id, updated_score)
-#     db.session.commit()
+@app.errorhandler(400)
+def bed_request(error):
+    return jsonify({
+        "success": False,
+        "error": 400,
+        "message": "bed request"
+    }), 400
 
-#     return "Success"
+@app.errorhandler(405)
+def not_allowed(error):
+    return jsonify({
+        "success": False,
+        "error": 405,
+        "message": "method not allowed"
+    }), 405
 
-# @app.route("/movies/<movie_id>/ratings", methods=["POST"])
-# def create_rating(movie_id):
-#     """Create a new rating for the movie."""
-
-#     logged_in_email = session.get("user_email")
-#     rating_score = request.form.get("rating")
-
-#     if logged_in_email is None:
-#         flash("You must log in to rate a movie.")
-#     elif not rating_score:
-#         flash("Error: you didn't select a score for your rating.")
-#     else:
-#         user = User.get_by_email(logged_in_email)
-#         movie = Movie.get_by_id(movie_id)
-
-#         rating = Rating.create(user, movie, int(rating_score))
-#         db.session.add(rating)
-#         db.session.commit()
-
-#         flash(f"You rated this movie {rating_score} out of 5.")
-
-#     return redirect(f"/movies/{movie_id}")
+@app.errorhandler(500)
+def server_error(error):
+    return jsonify({
+        "success": False,
+        "error": 500,
+        "message": "Internal Server Error"
+    }), 500
 
 
 if __name__ == "__main__":

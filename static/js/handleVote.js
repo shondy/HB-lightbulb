@@ -22,7 +22,7 @@ for (const voteLink of voteLinks){
       })
       .then((response) => response.json())
       .then((responseJson) => {
-        if (responseJson.status) {
+        if (responseJson.success) {
           vote.style.color = "green";
           const voteTotal = document.getElementsByClassName(`total-votes ${voteParam.idea_id}`)[0];
           voteTotal.innerText = 1 + parseInt(voteTotal.innerText);
@@ -39,7 +39,7 @@ for (const voteLink of voteLinks){
       })
       .then((response) => response.json())
       .then((responseJson) => {
-        if (responseJson.status) {
+        if (responseJson.success) {
           vote.style.color = "lightgray";
           const voteTotal = document.getElementsByClassName(`total-votes ${voteParam.idea_id}`)[0];
           voteTotal.innerText = parseInt(voteTotal.innerText) - 1;

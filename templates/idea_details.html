@@ -1,34 +1,24 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ idea.title }} - Details{% endblock %}
+{% block title %}Idea{% endblock %}
 
 {% block body %}
-<h1>{{ idea.title }}</h1>
-
-<h2>Description</h2>
-<p>
-  {{ idea.description }}
-</p>
-
-<div class="row">
-  <div>
-    <button class="btn btn-secondary btn-lg {{ 'active' if session.get('user_id') else '' }}" id="add-comment">Add your comment</button>
-  </div>
-</div>
-
-<h2>Comments</h2>
-<ul>
-  {% for comment in comments %}
-    <li>
-      <p>{{ comment.user.username }}</p>
-      {{ comment.description }}
-      {% if session.get('user_id') and comment.user_id == session['user_id'] %}
-      <button type="button" class="btn btn-secondary btn-sm edit-comment" id="{{ comment.comment_id}}">Edit</button>
-      {% endif %}
-      </a>
-    </li>
-  {% endfor %}
-</ul>
-
-<script src="/static/js/addComment.js"></script>
+<h2>Add your idea </h1>
+  <form action="/ideas/{{ idea.idea_id }}" method="PUT">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input class="form-control" id="title" value="{{ idea.title if idea is defined else ''}}">
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" class="form-control" name="description" rows="10">
+            {{ idea.description if idea is defined else '' }}
+        </textarea>
+    </div>
+    <div class="form-group">
+        <label for="link">Github link</label>
+        <input class="form-control" id="link" value="{{ idea.link if idea is defined else ''}}">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 {% endblock %}

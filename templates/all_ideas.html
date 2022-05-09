@@ -24,7 +24,7 @@
       {% for idea in ideas.items %}
       <tr>
         <td>
-          <a href="/ideas/{{ idea.idea_id }}">
+          <a href="/ideas/{{ idea.idea_id }}/comments">
             {{ idea.title }}
           </a>
         </td>
@@ -45,8 +45,8 @@
   
   
   <a href="/ideas?page={{ 1 }}&per_page={{ per_page }}"> First </a> |
-  {% if ideas.has_prev %}<a href="/ideas?page={{ ideas.prev_num }}&per_page={{ per_page }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
-  {% if ideas.has_next %}<a href="/ideas?page={{ ideas.next_num }}&per_page={{ per_page }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
+  {% if ideas.has_prev %}<a href="/all-ideas?page={{ ideas.prev_num }}&per_page={{ per_page }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
+  {% if ideas.has_next %}<a href="/all-ideas?page={{ ideas.next_num }}&per_page={{ per_page }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
   <a href="/ideas?page={{ ideas.pages }}&per_page={{ per_page }}"> Last </a>
   
   <script src="/static/js/handleVote.js"></script>
