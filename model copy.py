@@ -60,7 +60,7 @@ class Idea(db.Model):
     idea_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    link = db.Column(db.String(200))
+    link = db.Column(db.String(200), nullable=True)
     modified = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
 
@@ -86,12 +86,11 @@ class Idea(db.Model):
             )
         
     @classmethod
-    def update(cls, idea_id, new_title, new_description, new_link):
+    def update(cls, idea_id, new_title, new_description):
         """ Update a idea given idea_id and the updated title and description. """
         idea = cls.query.get(idea_id)
         idea.title = new_title
         idea.description = new_description
-        idea.link = new_link
         idea.modified = datetime.now()
 
     @classmethod

@@ -38,16 +38,19 @@ def create_idea():
         """Create a new idea."""
 
         user = User.get_by_id(session["user_id"])
-        title = request.form.get("title")
-        description = request.form.get("description")
-        link = request.form.get("link")
+        title = request.json.get("title")
+        description = request.json.get("description")
+        link = request.json.get("link")
         
-        idea = Comment.create(user, title, description, link)
+        idea = Idea.create(user, title, description, link)
         try:
             db.session.add(idea)
             db.session.commit()
             flash(f"Your idea was created!")
-            return redirect("/all-ideas")
+            return jsonify({ 
+                "success": True,
+                "udated": idea.idea_id
+                })
 
         except exc.SQLAlchemyError as err:
             db.session.rollback()
@@ -56,7 +59,7 @@ def create_idea():
     else:
         """Show template for creating an idea"""
 
-        return render_template("idea_details.html")
+        return render_template("idea_details.html", method="POST")
 
 @app.route("/ideas/<idea_id>", methods=['GET', 'PUT'])
 def edit_idea(idea_id):
@@ -67,9 +70,9 @@ def edit_idea(idea_id):
     if request.method == 'PUT':
         """Update an idea."""
 
-        title = request.form.get("title")
-        description = request.form.get("description")
-        link = request.form.get("link")
+        title = request.json.get("title")
+        description = request.json.get("description")
+        link = request.json.get("link")
 
         idea.title = title
         idea.description = description
@@ -77,7 +80,11 @@ def edit_idea(idea_id):
   
         try:
             db.session.commit()
-            return redirect(f"/ideas/{idea_id}/comments")
+            return jsonify({ 
+                "success": True,
+                "udated": idea_id
+                })
+
         except exc.SQLAlchemyError as err:
             db.session.rollback()
             abort(422)
@@ -85,7 +92,7 @@ def edit_idea(idea_id):
     else:
         """Show template for editing an idea."""
 
-        return render_template("idea_details.html", idea=idea)
+        return render_template("idea_details.html", idea=idea, method="PUT")
 
 @app.route("/ideas/<idea_id>/comments")
 def show_idea(idea_id):

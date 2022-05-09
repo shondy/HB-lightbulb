@@ -6,16 +6,16 @@ for (const voteLink of voteLinks){
     evt.preventDefault();
     vote = evt.target;
 
-    const voteParam = {
+    const voteJSON = {
       idea_id: vote.parentElement.classList[1],
     };
     
-    console.log(voteParam);
+    console.log(voteJSON);
 
     if (vote.style.color === "lightgray") {
       fetch('/votes', {
         method: 'POST',
-        body: JSON.stringify(voteParam),
+        body: JSON.stringify(voteJSON),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -24,7 +24,7 @@ for (const voteLink of voteLinks){
       .then((responseJson) => {
         if (responseJson.success) {
           vote.style.color = "green";
-          const voteTotal = document.getElementsByClassName(`total-votes ${voteParam.idea_id}`)[0];
+          const voteTotal = document.getElementsByClassName(`total-votes ${voteJSON.idea_id}`)[0];
           voteTotal.innerText = 1 + parseInt(voteTotal.innerText);
         }
       });
@@ -32,7 +32,7 @@ for (const voteLink of voteLinks){
     else {
       fetch('/votes', {
         method: 'DELETE',
-        body: JSON.stringify(voteParam),
+        body: JSON.stringify(voteJSON),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -41,7 +41,7 @@ for (const voteLink of voteLinks){
       .then((responseJson) => {
         if (responseJson.success) {
           vote.style.color = "lightgray";
-          const voteTotal = document.getElementsByClassName(`total-votes ${voteParam.idea_id}`)[0];
+          const voteTotal = document.getElementsByClassName(`total-votes ${voteJSON.idea_id}`)[0];
           voteTotal.innerText = parseInt(voteTotal.innerText) - 1;
         }
       });
