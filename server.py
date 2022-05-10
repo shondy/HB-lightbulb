@@ -63,7 +63,7 @@ def create_idea():
 
 @app.route("/ideas/<idea_id>", methods=['GET', 'PUT'])
 def edit_idea(idea_id):
-    """Handling changing an idea """
+    """Handle changing of an idea """
 
     idea = Idea.get_by_id(idea_id)
 
@@ -96,7 +96,7 @@ def edit_idea(idea_id):
 
 @app.route("/ideas/<idea_id>/comments")
 def show_idea(idea_id):
-    """Show details on a particular idea with all comments."""
+    """Show details of an idea with all comments to this idea."""
 
     idea = Idea.get_by_id(idea_id)
     comments = Comment.get_by_idea_id(idea_id)
@@ -112,12 +112,12 @@ def process_login():
         email = request.form.get("email")
         password = request.form.get("password")
         user = User.get_by_email(email)
-        print("user--------------->", user)
+
         if not user or user.password != password:
             flash("The email or password you entered was incorrect.")
             return redirect("/login")
         
-        # Log in user by storing the user's email in session
+        # Log in user by storing the user's id in session
         session["user_id"] = user.user_id
         flash(f"Welcome back, {user.username}!")
 
@@ -167,6 +167,21 @@ def register_user():
 
     else:
         return render_template("users.html")
+
+@app.route("/users/<user_id>", methods=['GET', 'PUT'])
+def edit_user(user_id):
+    """Handle user info."""
+
+    user = User.get_by_id(user_id)
+    
+    if request.method == 'POST':
+        """Update profile info of a user"""
+        pass
+    else:
+        """Show user info, user ideas and ideas voted by the user"""
+        return render_template("user_details.html", user=user)
+
+    
 
 @app.route("/comments/<idea_id>", methods=['GET', 'POST'])
 def create_comment(idea_id):

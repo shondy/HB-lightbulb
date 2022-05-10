@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Comment to the idea {{ idea.title }}{% endblock %}
+{% block title %}Comment to the Idea {{ idea.title }}{% endblock %}
 
 {% block body %}
 <h2>Add your comment to the idea {{ idea.title }}</h1>
@@ -11,7 +11,7 @@
         <label for="description">Your comment</label>
         {% if comment is defined %}
           <input id="comment_id" type="hidden" name="comment_id" value="{{ comment.comment_id }}">     
-          <textarea id="description" class="form-control" name="description" rows="10">{{ comment.description }}</textarea>
+          <textarea id="description" class="form-control" name="description" rows="10" required>{{ comment.description }}</textarea>
         {% else %}
           <textarea id="description" class="form-control" name="description" rows="10"></textarea>
         {% endif %}
