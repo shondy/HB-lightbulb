@@ -25,6 +25,30 @@ def get_ideas_with_votes(user_id, page, per_page):
 
     return ideas_with_votes
 
+def get_user_ideas_with_votes(user_id, page, per_page):
+    """Return all ideas made by user with total votes on the page."""
+    
+    ideas_with_votes = db.session.query(
+        Idea.idea_id, 
+        Idea.title, 
+        func.count(Vote.vote_id).label("total_votes")
+        ).outerjoin(Vote).filter(Idea.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified).paginate(page, per_page, error_out = False)
+
+
+    return ideas_with_votes
+
+def get_voted_by_user_ideas_with_votes(user_id, page, per_page):
+    """Return all ideas made by user with total votes on the page."""
+    
+    ideas_with_votes = db.session.query(
+        Idea.idea_id, 
+        Idea.title, 
+        func.count(Vote.vote_id).label("total_votes")
+        ).join(Vote).filter(Vote.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified).paginate(page, per_page, error_out = False)
+
+
+    return ideas_with_votes
+
 if __name__ == "__main__":
     from server import app
 

@@ -1,20 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}All Ideas{% endblock %}
+{% block title %}All User Ideas{% endblock %}
 
 {% block body %}
   <div class="container-fluid">
 
     <div class="row">
       <div class="col-12">
-        <h1>All Ideas</h1>
+        <h1>Your ideas</h1>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-6">
-        <a class="btn btn-secondary btn-lg active" href="/ideas" role="button">Add your idea</a>
-      </div>
-      <div class="col-6">
+      <div class="col-6 offset-6"></div>
         <form action="/ideas">
           <select name="per_page">
             <option value="5"{% if per_page == 5 %} selected="selected"{% endif %}>5</option>
@@ -44,13 +41,6 @@
                 </a>
               </td>
               <td>
-                {% if session.get('user_id') %}          
-                  {% if idea.user_vote == 1 %}                
-                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: green"></i></a>
-                  {% else %}
-                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: lightgray"></i></a>
-                  {% endif %}
-                {% endif %}
                 <span class='total-votes {{idea.idea_id}}'>{{ idea.total_votes }}</span> votes 
               </td>
             </tr>
@@ -62,14 +52,13 @@
   
     <div class="row">
       <div class="col-12">
-        <a href="/all-ideas?page={{ 1 }}&per_page={{ per_page }}"> First </a> |
-        {% if ideas.has_prev %}<a href="/all-ideas?page={{ ideas.prev_num }}&per_page={{ per_page }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
-        {% if ideas.has_next %}<a href="/all-ideas?page={{ ideas.next_num }}&per_page={{ per_page }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
-        <a href="/all-ideas?page={{ ideas.pages }}&per_page={{ per_page }}"> Last </a>
+        <a href="/users/{{ session['user_id'] }}/ideas?page={{ 1 }}&per_page={{ per_page }}"> First </a> |
+        {% if ideas.has_prev %}<a href="/users/{{ session['user_id'] }}/ideas?page={{ ideas.prev_num }}&per_page={{ per_page }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
+        {% if ideas.has_next %}<a href="/users/{{ session['user_id'] }}/ideas?page={{ ideas.next_num }}&per_page={{ per_page }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
+        <a href="/users/{{ session['user_id'] }}/ideas?page={{ ideas.pages }}&per_page={{ per_page }}"> Last </a>
       </div>
     </div>
 
   </div>
   
-  <script src="/static/js/handleVote.js"></script>
 {% endblock %}

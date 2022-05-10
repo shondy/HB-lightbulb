@@ -1,7 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}User {{ user.username }} Details{% endblock %}
+{% block title %}User{% endblock %}
 
 {% block body %}
-
+<h2>{{ 'Edit your account settings' if user is defined else 'Create an Account' }}</h2>
+  <form id="user-details">
+    <input id="method" type="hidden" name="method" value="{{ method }}">
+    <input id="user_id" type="hidden" name="user_id" value="{{ user.user_id if user is defined else '' }}">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input class="form-control" id="username" value="{{ user.username if user is defined else ''}}" required="required">
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" value="{{ user.email if user is defined else ''}}" required="required">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" value="{{ user.password if user is defined else ''}}" required="required">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+<script src="/static/js/userDetails.js"></script>
 {% endblock %}

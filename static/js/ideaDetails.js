@@ -17,7 +17,8 @@ function handleIdea(url, method, title, description, link) {
   .then((response) => response.json())
   .then((responseJson) => {
     if (responseJson.success) {
-      window.history.back();
+      // window.history.back();
+      window.history.pushState();
     }
   });
 }

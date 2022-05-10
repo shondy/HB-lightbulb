@@ -23,7 +23,7 @@ class User(db.Model):
         return f"<User user_id={self.user_id} username={self.username} email={self.email}>"
 
     @classmethod
-    def create(cls, email, username, password):
+    def create(cls, username, email, password):
        """Create and return a new user."""
 
        return cls(email=email, username=username, password=password)

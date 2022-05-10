@@ -49,7 +49,7 @@ def create_idea():
             flash(f"Your idea was created!")
             return jsonify({ 
                 "success": True,
-                "udated": idea.idea_id
+                "updated": idea.idea_id
                 })
 
         except exc.SQLAlchemyError as err:
@@ -82,7 +82,7 @@ def edit_idea(idea_id):
             db.session.commit()
             return jsonify({ 
                 "success": True,
-                "udated": idea_id
+                "updated": idea_id
                 })
 
         except exc.SQLAlchemyError as err:
@@ -166,22 +166,65 @@ def register_user():
             abort(422)
 
     else:
-        return render_template("users.html")
+        return render_template("user_details.html", method='POST')
 
 @app.route("/users/<user_id>", methods=['GET', 'PUT'])
 def edit_user(user_id):
     """Handle user info."""
 
     user = User.get_by_id(user_id)
-    
-    if request.method == 'POST':
+
+    if request.method == 'PUT':
         """Update profile info of a user"""
-        pass
+
+        username = request.json.get("username")
+        email = request.json.get("email")
+        password = request.json.get("password")
+
+        user.username = username
+        user.email = email
+        user.password = password
+  
+        try:
+            db.session.commit()
+            print("============================", user.username)
+            return jsonify({ 
+                "success": True,
+                "updated": user_id
+                })
+
+        except exc.SQLAlchemyError as err:
+            db.session.rollback()
+            abort(422)
+        
     else:
         """Show user info, user ideas and ideas voted by the user"""
-        return render_template("user_details.html", user=user)
+        return render_template("user_details.html", method='PUT', user=user)
+
+@app.route("/users/<user_id>/ideas")
+def user_ideas(user_id):
+    """Show all ideas created by user."""
+
+    page = int(request.args.get("page", "1"))
+    per_page = int(request.args.get("per_page", "5"))
+
+    ideas_with_votes = crud.get_user_ideas_with_votes(user_id, page, per_page)
+
+    return render_template("user_ideas.html", ideas=ideas_with_votes, per_page=per_page)
+
+@app.route("/users/<user_id>/votes")
+def user_votes(user_id):
+    """Show all ideas user voted for."""
+
+    page = int(request.args.get("page", "1"))
+    per_page = int(request.args.get("per_page", "5"))
+
+    ideas_with_votes = crud.get_voted_by_user_ideas_with_votes(user_id, page, per_page)
+
+    return render_template("user_votes.html", ideas=ideas_with_votes, per_page=per_page)
 
     
+
 
 @app.route("/comments/<idea_id>", methods=['GET', 'POST'])
 def create_comment(idea_id):
@@ -230,7 +273,7 @@ def edit_comment(idea_id, comment_id):
             db.session.commit()
             return jsonify({ 
                 "success": True,
-                "udated": comment.comment_id
+                "updated": comment.comment_id
             })
         except exc.SQLAlchemyError as err:
             db.session.rollback()

@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Project Ideas Home{% endblock %}
+{% block title %}Lightbulb Homepage{% endblock %}
 
 {% block body %}
   <div class="container-fluid">
-    
+
     <div class="row">
       <div class="col-12">
         <h1>From idea to project proposal</h1>
@@ -18,8 +18,9 @@
         </p>
         <div>
           <a class="btn btn-primary" href="/all-ideas" role="button">Look through ideas</a>
-          <a class="btn btn-primary" href="/users" role="button">Join your community</a>
-  
+          {% if not session.get('user_id') %}
+            <a class="btn btn-primary" href="/users" role="button">Join your community</a>
+          {% endif %}
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
