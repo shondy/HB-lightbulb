@@ -23,13 +23,25 @@ function handleIdea(url, method, title, description, link) {
   });
 }
 
+function checkIsNotEmpty(value){
+  // check if value doesn't contain whitespace characters only 
+  const valid_value = /.*[^\s]+.*/;
+  return valid_value.test(value);
+}
+
 const formIdeaDetails = document.querySelector('#idea-details');
 
 formIdeaDetails.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const method = document.querySelector('#method').value;
   const title = document.querySelector('#title').value;
+  if (!checkIsNotEmpty(title)){
+    return;
+  }
   const description = document.querySelector('#description').value;
+  if (!checkIsNotEmpty(description)){
+    return;
+  }
   const link = document.querySelector('#link').value;
 
   let url = "/ideas";
