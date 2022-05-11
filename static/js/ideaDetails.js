@@ -18,7 +18,7 @@ function handleIdea(url, method, title, description, link) {
   .then((responseJson) => {
     if (responseJson.success) {
       // window.history.back();
-      window.history.pushState();
+      window.open(`/ideas/${responseJson.idea_id}/comments`, '_self');
     }
   });
 }

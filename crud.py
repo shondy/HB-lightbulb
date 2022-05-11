@@ -43,7 +43,9 @@ def get_voted_by_user_ideas_with_votes(user_id, page, per_page):
     ideas_with_votes = db.session.query(
         Idea.idea_id, 
         Idea.title, 
-        func.count(Vote.vote_id).label("total_votes")
+        func.count(Vote.vote_id).label("total_votes"),
+        func.count(case(
+        [((Vote.user_id == user_id), 1)])).label("user_vote")
         ).join(Vote).filter(Vote.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified).paginate(page, per_page, error_out = False)
 
 

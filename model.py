@@ -3,6 +3,8 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
+import bcrypt
+from sqlalchemy.ext.hybrid import hybrid_property
 
 db = SQLAlchemy()
 
@@ -15,12 +17,22 @@ class User(db.Model):
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    # password_hash = db.Column(db.String(128), nullable=False)
 
     # ratings = a list of Rating objects
 
     def __repr__(self):
         return f"<User user_id={self.user_id} username={self.username} email={self.email}>"
+
+    # @hybrid_property
+    # def password(self):
+    #     return self.password_hash
+
+    # @password.setter
+    # def set_password(self, password):
+    #     self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
+        
 
     @classmethod
     def create(cls, username, email, password):
@@ -151,7 +163,6 @@ class Vote(db.Model):
         return cls.query.filter(Vote.user_id == user_id, Vote.idea_id == idea_id).first()
 
 
-    
 
 class Comment(db.Model):
     """A comment."""

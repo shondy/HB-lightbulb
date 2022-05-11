@@ -46,10 +46,9 @@ def create_idea():
         try:
             db.session.add(idea)
             db.session.commit()
-            flash(f"Your idea was created!")
             return jsonify({ 
                 "success": True,
-                "updated": idea.idea_id
+                "idea_id": idea.idea_id
                 })
 
         except exc.SQLAlchemyError as err:
@@ -82,7 +81,7 @@ def edit_idea(idea_id):
             db.session.commit()
             return jsonify({ 
                 "success": True,
-                "updated": idea_id
+                "idea_id": idea_id
                 })
 
         except exc.SQLAlchemyError as err:
@@ -139,27 +138,28 @@ def register_user():
     """Handle creating of a new user."""
 
     if request.method == 'POST':
-        username = request.form.get("username")
-        email = request.form.get("email")
-        password = request.form.get("password")
+        username = request.json.get("username")
+        email = request.json.get("email")
+        password = request.json.get("password")
+        print("================", username)
 
         user = User.get_by_username(username)
         if user:
-            flash(f"Username {username} is already taken. Try again.")
-            return redirect("/users")
+            abort(400, f"Username {username} is already taken. Try again.")
 
         user = User.get_by_email(email)
         if user:
-            flash(f"Accont with email {email} already exists. Try again.")
-            return redirect("/users")
+            abort(400, f"Accont with email {email} already exists. Try again.")
         
         user = User.create(username, email, password)
         
         try:
             db.session.add(user)
             db.session.commit()
-            flash("Account created! Please log in.")
-            return redirect("/login")
+            return jsonify({ 
+                "success": True,
+                "added": user.user_id
+                })
 
         except exc.SQLAlchemyError as err:
             db.session.rollback()
@@ -181,13 +181,22 @@ def edit_user(user_id):
         email = request.json.get("email")
         password = request.json.get("password")
 
+        if user.username != username:
+            new_user = User.get_by_username(username)
+            if new_user:
+                abort(400, f"Username {username} is already taken. Try again.")
+
+        if user.email != email:
+            new_user = User.get_by_email(email)
+            if new_user:
+                abort(400, f"Accont with email {email} already exists. Try again.")
+
         user.username = username
         user.email = email
         user.password = password
   
         try:
             db.session.commit()
-            print("============================", user.username)
             return jsonify({ 
                 "success": True,
                 "updated": user_id
@@ -211,6 +220,7 @@ def user_ideas(user_id):
     ideas_with_votes = crud.get_user_ideas_with_votes(user_id, page, per_page)
 
     return render_template("user_ideas.html", ideas=ideas_with_votes, per_page=per_page)
+    
 
 @app.route("/users/<user_id>/votes")
 def user_votes(user_id):
@@ -223,7 +233,6 @@ def user_votes(user_id):
 
     return render_template("user_votes.html", ideas=ideas_with_votes, per_page=per_page)
 
-    
 
 
 @app.route("/comments/<idea_id>", methods=['GET', 'POST'])
@@ -333,7 +342,6 @@ def delete_vote():
     
     
     vote = Vote.get_by_user_id_and_idea_id(user_id, idea_id)
-    print("vote=======================", vote)
     vote_id = vote.vote_id
 
     try:
@@ -347,6 +355,13 @@ def delete_vote():
         db.session.rollback()
         abort(422)
 
+@app.errorhandler(400)
+def custom400(error):
+    return jsonify({
+        "success": False,
+        "error": 400,
+        "message": error.description
+    }), 400
 
 @app.errorhandler(404)
 def not_found(error):
@@ -364,13 +379,13 @@ def unprocessable(error):
         "message": "unprocessable"
     }), 422
 
-@app.errorhandler(400)
-def bed_request(error):
-    return jsonify({
-        "success": False,
-        "error": 400,
-        "message": "bed request"
-    }), 400
+# @app.errorhandler(400)
+# def bed_request(error):
+#     return jsonify({
+#         "success": False,
+#         "error": 400,
+#         "message": "bed request"
+#     }), 400
 
 @app.errorhandler(405)
 def not_allowed(error):

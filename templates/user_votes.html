@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}All User Ideas{% endblock %}
+{% block title %}All Ideas voted by User{% endblock %}
 
 {% block body %}
   <div class="container-fluid">
 
     <div class="row">
       <div class="col-12">
-        <h1>Your ideas</h1>
+        <h2>Ideas that you voted for</h2>
       </div>
     </div>
 
@@ -41,6 +41,11 @@
                 </a>
               </td>
               <td>
+                {% if idea.user_vote == 1 %}                
+                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: green"></i></a>
+                {% else %}
+                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: lightgray"></i></a>
+                {% endif %}
                 <span class='total-votes {{idea.idea_id}}'>{{ idea.total_votes }}</span> votes 
               </td>
             </tr>
@@ -60,5 +65,5 @@
     </div>
 
   </div>
-  
+  <script src="/static/js/handleVote.js"></script>
 {% endblock %}

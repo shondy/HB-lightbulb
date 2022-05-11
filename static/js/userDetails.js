@@ -6,7 +6,6 @@ function handleUser(url, method, username, email, password) {
     email: email, 
     password: password,
   };
-  console.log(userJSON)
 
   fetch(url, {
     method: method,
@@ -18,7 +17,12 @@ function handleUser(url, method, username, email, password) {
   .then((response) => response.json())
   .then((responseJson) => {
     if (responseJson.success) {
-      window.history.back();
+      if (method === 'POST'){
+        window.open(`/login`, '_self');
+      }
+    }
+    else if (responseJson.error === 400) {
+      alert(responseJson.message);
     }
   });
 }
