@@ -4,7 +4,6 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 import bcrypt
-from sqlalchemy.ext.hybrid import hybrid_property
 
 db = SQLAlchemy()
 
@@ -17,28 +16,65 @@ class User(db.Model):
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False)
-    # password_hash = db.Column(db.String(128), nullable=False)
+    #password = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(100), nullable=False)
 
     # ratings = a list of Rating objects
 
     def __repr__(self):
         return f"<User user_id={self.user_id} username={self.username} email={self.email}>"
 
-    # @hybrid_property
-    # def password(self):
-    #     return self.password_hash
+    @classmethod
+    def all_users(cls):
+        return cls.query.all()
 
-    # @password.setter
-    # def set_password(self, password):
-    #     self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
-        
+    # using property decorator
+    # define a getter function
+    @property
+    def password(self):
+        return self.password_hash
+
+    # a setter function
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
+
+    def verify_password(self, password):
+        # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+        return bcrypt.checkpw(password, self.password_hash)
+
 
     @classmethod
     def create(cls, username, email, password):
-       """Create and return a new user."""
+        """Create and return a new user."""
+        if cls.get_by_username(username) is not None:
+            raise ValueError(f"Username {username} is already taken. Try again.")
+        
+        if cls.get_by_email(email) is not None:
+            raise ValueError(f"Accont with email {email} already exists. Try again.")
 
-       return cls(email=email, username=username, password=password)
+        return cls(email=email, username=username, password=password)
+    
+    @classmethod
+    def update(cls, user_id, username, email, password, confirm_password):
+        """Update and return a new user."""
+        user = cls.get_by_id(user_id)
+
+        if not user.verify_password(confirm_password):
+            raise ValueError("Wrong current password. Try again.")
+
+        # if user.username != username and cls.query.filter_by(username=username).first() is not None:
+        if user.username != username and cls.get_by_username(username) is not None:
+            raise ValueError(f"Username {username} is already taken. Try again.")
+        
+        if user.email != email and cls.get_by_email(email) is not None:
+            raise ValueError(f"Accont with email {email} already exists. Try again.")
+
+        user.username = username
+        user.email = email
+        user.password = password
+
+        return user
 
     @classmethod
     def get_by_id(cls, user_id):
@@ -58,10 +94,6 @@ class User(db.Model):
 
         return cls.query.filter_by(username=username).first()
 
-
-    @classmethod
-    def all_users(cls):
-        return cls.query.all()
 
 
 class Idea(db.Model):

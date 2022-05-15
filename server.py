@@ -108,19 +108,17 @@ def process_login():
     """Process user login."""
 
     if request.method == 'POST':
-        email = request.form.get("email")
-        password = request.form.get("password")
+        email = request.json.get("email")
+        password = request.json.get("password")
         user = User.get_by_email(email)
-
-        if not user or user.password != password:
-            flash("The email or password you entered was incorrect.")
-            return redirect("/login")
+    
+        if not user or not user.verify_password(password):
+            abort(400, "The email or password you entered was incorrect.")
         
         # Log in user by storing the user's id in session
         session["user_id"] = user.user_id
-        flash(f"Welcome back, {user.username}!")
+        return jsonify({"success": True})
 
-        return redirect("/")
     else:
         return render_template("login.html")
 
@@ -130,7 +128,6 @@ def process_logout():
 
     session.pop('user_id')
     return redirect("/")
-    
 
 
 @app.route("/users", methods=['GET', 'POST'])
@@ -143,15 +140,10 @@ def register_user():
         password = request.json.get("password")
         print("================", username)
 
-        user = User.get_by_username(username)
-        if user:
-            abort(400, f"Username {username} is already taken. Try again.")
-
-        user = User.get_by_email(email)
-        if user:
-            abort(400, f"Accont with email {email} already exists. Try again.")
-        
-        user = User.create(username, email, password)
+        try:
+            user = User.create(username, email, password)
+        except ValueError as err:
+            abort(400, err.args[0])
         
         try:
             db.session.add(user)
@@ -180,21 +172,13 @@ def edit_user(user_id):
         username = request.json.get("username")
         email = request.json.get("email")
         password = request.json.get("password")
+        confirm_password = request.json.get("confirmPassword")
 
-        if user.username != username:
-            new_user = User.get_by_username(username)
-            if new_user:
-                abort(400, f"Username {username} is already taken. Try again.")
+        try:
+            user = User.update(user_id, username, email, password, confirm_password)
+        except ValueError as err:
+            abort(400, err.args[0])
 
-        if user.email != email:
-            new_user = User.get_by_email(email)
-            if new_user:
-                abort(400, f"Accont with email {email} already exists. Try again.")
-
-        user.username = username
-        user.email = email
-        user.password = password
-  
         try:
             db.session.commit()
             return jsonify({ 
@@ -406,4 +390,7 @@ def server_error(error):
 
 if __name__ == "__main__":
     connect_to_db(app)
+    # app.run('0.0.0.0', debug=True, port=8100, ssl_context=(
+    #     'certificates/server.crt', 
+    #     'certificates/server.key'))
     app.run(host="0.0.0.0", debug=True)

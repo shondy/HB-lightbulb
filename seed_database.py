@@ -21,7 +21,7 @@ for n in range(10):
     email = f"user{n}@test.com"
     password = f"test{n}"
 
-    db_user = model.User.create(email, username, password)
+    db_user = model.User.create(username, email, password)
     users_in_db.append(db_user)
 
 model.db.session.add_all(users_in_db)

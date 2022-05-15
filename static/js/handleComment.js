@@ -44,7 +44,6 @@ for (button of deleteCommentButtons){
     const idea_id = location.pathname.split('/')[2];
     const comment_id = evt.target.id;
     const url = `/comments/${idea_id}/${comment_id}`;
-    console.log(url);
     fetch(`${url}`, {
       method: 'DELETE',
       headers: {
@@ -54,7 +53,6 @@ for (button of deleteCommentButtons){
     .then((response) => response.json())
     .then((responseJson) => {
       if (responseJson.success) {
-        console.log(responseJson);
         window.location.reload();
       }
     });
