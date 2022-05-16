@@ -10,7 +10,7 @@ def get_ideas_with_votes(user_id, page, per_page):
             Idea.idea_id, 
             Idea.title, 
             func.count(Vote.vote_id).label("total_votes")
-            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id).paginate(page, per_page, error_out = False)
+            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id.desc()).paginate(page, per_page, error_out = False)
 
 
     else:
@@ -20,7 +20,7 @@ def get_ideas_with_votes(user_id, page, per_page):
             func.count(Vote.vote_id).label("total_votes"),
             func.count(case(
             [((Vote.user_id == user_id), 1)])).label("user_vote")
-            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id).paginate(page, per_page, error_out = False)
+            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id.desc()).paginate(page, per_page, error_out = False)
 
 
     return ideas_with_votes
@@ -32,7 +32,7 @@ def get_user_ideas_with_votes(user_id, page, per_page):
         Idea.idea_id, 
         Idea.title, 
         func.count(Vote.vote_id).label("total_votes")
-        ).outerjoin(Vote).filter(Idea.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified).paginate(page, per_page, error_out = False)
+        ).outerjoin(Vote).filter(Idea.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified.desc()).paginate(page, per_page, error_out = False)
 
 
     return ideas_with_votes
@@ -46,7 +46,7 @@ def get_voted_by_user_ideas_with_votes(user_id, page, per_page):
         func.count(Vote.vote_id).label("total_votes"),
         func.count(case(
         [((Vote.user_id == user_id), 1)])).label("user_vote")
-        ).join(Vote).filter(Vote.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified).paginate(page, per_page, error_out = False)
+        ).join(Vote).filter(Vote.user_id==user_id).group_by(Idea.idea_id).order_by(Idea.modified.desc()).paginate(page, per_page, error_out = False)
 
 
     return ideas_with_votes

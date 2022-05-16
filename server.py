@@ -6,9 +6,10 @@ from sqlalchemy import exc
 
 from jinja2 import StrictUndefined
 import crud
+import os
 
 app = Flask(__name__)
-app.secret_key = "dev"
+app.secret_key = os.environ['APP_SECRET_KEY']
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -64,14 +65,14 @@ def create_idea():
 def edit_idea(idea_id):
     """Handle changing of an idea """
 
-    idea = Idea.get_by_id(idea_id)
-
     if request.method == 'PUT':
         """Update an idea."""
 
         title = request.json.get("title")
         description = request.json.get("description")
         link = request.json.get("link")
+
+        Idea.update(idea_id, title, description, link)
 
         idea.title = title
         idea.description = description
@@ -90,6 +91,8 @@ def edit_idea(idea_id):
 
     else:
         """Show template for editing an idea."""
+
+        idea = Idea.get_by_id(idea_id)
 
         return render_template("idea_details.html", idea=idea, method="PUT")
 
@@ -254,19 +257,17 @@ def create_comment(idea_id):
 def edit_comment(idea_id, comment_id):
     """handle changing a comment."""
 
-    comment = Comment.get_by_id(comment_id)
-
     if request.method == 'PUT':
         """Update a comment."""
 
         description = request.json.get("description")
-        comment.description = description
+        Comment.update(comment_id, description)
   
         try:
             db.session.commit()
             return jsonify({ 
                 "success": True,
-                "updated": comment.comment_id
+                "updated": comment_id
             })
         except exc.SQLAlchemyError as err:
             db.session.rollback()
@@ -274,6 +275,8 @@ def edit_comment(idea_id, comment_id):
 
     elif request.method == 'DELETE':
         """Delete a comment."""
+
+        comment = Comment.get_by_id(comment_id)
 
         try:
             db.session.delete(comment)
@@ -290,6 +293,7 @@ def edit_comment(idea_id, comment_id):
         """Show template for editing a comment."""
 
         idea = Idea.get_by_id(idea_id)
+        comment = Comment.get_by_id(comment_id)
 
         return render_template("comment_details.html", idea=idea, comment=comment, method="PUT")
 

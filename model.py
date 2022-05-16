@@ -4,8 +4,20 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 import bcrypt
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+
 
 db = SQLAlchemy()
+
+url_ideas ="http://localhost:5000/ideas/"
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
+sender_email = "lightbulb.shondy@gmail.com"
+password = os.environ['NOTIFICATION_PASSWORD']
+context = ssl.create_default_context()
 
 
 class User(db.Model):
@@ -132,7 +144,7 @@ class Idea(db.Model):
     @classmethod
     def update(cls, idea_id, new_title, new_description, new_link):
         """ Update a idea given idea_id and the updated title and description. """
-        idea = cls.query.get(idea_id)
+        idea = cls.get_by_id(idea_id)
         idea.title = new_title
         idea.description = new_description
         idea.link = new_link
@@ -184,15 +196,15 @@ class Vote(db.Model):
 
     @classmethod
     def get_by_idea_id(cls, idea_id):
-        return cls.query.filter(Vote.idea_id == idea_id).all()
+        return cls.query.filter(cls.idea_id == idea_id).all()
 
     @classmethod
     def get_by_user_id(cls, user_id):
-        return cls.query.filter(Vote.user_id == user_id).all()
+        return cls.query.filter(cls.user_id == user_id).all()
 
     @classmethod
     def get_by_user_id_and_idea_id(cls, user_id, idea_id):
-        return cls.query.filter(Vote.user_id == user_id, Vote.idea_id == idea_id).first()
+        return cls.query.filter(cls.user_id == user_id, cls.idea_id == idea_id).first()
 
 
 
@@ -219,20 +231,26 @@ class Comment(db.Model):
         """Create and return a new comment."""
         if not modified:
             modified = datetime.now()
-
-        return cls(
+        
+        comment = cls(
             user=user,
             idea=idea,
             description=description,
             modified=modified
             )
 
+        comment.email_notification()
+
+        return comment
+
     @classmethod
     def update(cls, comment_id, new_description):
         """ Update a idea given idea_id and the updated title and description. """
-        comment = cls.query.get(comment_id)
+        comment = cls.get_by_id(comment_id)
         comment.description = new_description
         comment.modified = datetime.now()
+
+        comment.email_notification()
 
     @classmethod
     def get_by_id(cls, comment_id):
@@ -242,12 +260,57 @@ class Comment(db.Model):
 
     @classmethod
     def get_by_idea_id(cls, idea_id):
-        return cls.query.filter(Comment.idea_id == idea_id).all()
+        return cls.query.filter(cls.idea_id == idea_id).order_by(cls.modified.desc()).all()
 
     @classmethod
     def get_by_user_id(cls, user_id):
-        return cls.query.filter(Comment.user_id == user_id).all()
+        return cls.query.filter(cls.user_id == user_id).order_by(cls.modified.desc()).all()
 
+    def email_notification(self):
+        # send an email notification to the user whose idea has been commented on
+        receiver_email = self.idea.user.email
+
+        message = MIMEMultipart("alternative")
+
+        message["Subject"] = "LightBulb notification"
+        message["From"] = sender_email
+        message["To"] = receiver_email
+        
+        text = f"""\
+        Hi {self.idea.user.username},
+
+        There is a new/updated comment to your idea {self.idea.title} {url_ideas}{self.idea_id}/comments:
+        {self.description}"""
+
+        html = f"""\
+        <html>
+        <body>
+            <p>
+                Hi {self.idea.user.username},
+            </p>
+            <p>
+                There is a new/updated comment to your idea <a href="{url_ideas}{self.idea_id}/comments">{self.idea.title}</a> :
+            </p>
+            <p>
+                {self.description}
+            </p>
+        </body>
+        </html>
+        """
+
+        # Turn these into plain/html MIMEText objects
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+
+        # Add HTML/plain-text parts to MIMEMultipart message, which is the MIMEMultipart("alternative") instance
+        # The email client will try to render the last part first
+        message.attach(part1)
+        message.attach(part2)
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
 
 
 def connect_to_db(flask_app, db_uri="postgresql:///ideas", echo=True):

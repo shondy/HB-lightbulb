@@ -4,10 +4,13 @@ import os
 import json
 from random import choice, sample
 from datetime import datetime
+# import sys
 
 import model
 import server
 
+# dbname = sys.argv[1]
+# os.system(f"dropdb {dbname}")
 os.system("dropdb ideas")
 os.system("createdb ideas")
 
