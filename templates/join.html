@@ -3,38 +3,46 @@
 {% block title %}User{% endblock %}
 
 {% block body %}
-<h2>{{ 'Edit your account settings' if user is defined else 'Create an Account' }}</h2>
-  <form id="user-details" class="requires-validation" novalidate>
-    <input id="method" type="hidden" name="method" value="{{ method }}">
-    <input id="user_id" type="hidden" name="user_id" value="{{ user.user_id if user is defined else '' }}">
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+
+  <h2>Create an Account</h2>
+
+  <form id="join" class="requires-validation" novalidate>
     <div class="form-group">
         <label for="username">Username</label>
-        <input class="form-control" id="username" value="{{ user.username if user is defined else ''}}" pattern=".*[^\s]+.*" required="required">
+        <input class="form-control" id="username" pattern=".*[^\s]+.*" required="required">
         <div class="invalid-feedback">Username cannot be blank.</div>
     </div>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" class="form-control" id="email" value="{{ user.email if user is defined else ''}}" required="required">
+      <input type="email" class="form-control" id="email" required="required">
       <div class="invalid-feedback">Wrong format of the email.</div>
     </div>
     <div class="form-group">
-      <label for="password">{{ 'New ' if user is defined else '' }}Password</label>
+      <label for="password">Password</label>
       <!-- ?= in regex is a positive lookahead, a type of zero-width assertion. 
       What it's saying is that the captured match must be followed by whatever is within the parentheses but that part isn't captured.  -->
       <input type="password" class="form-control" id="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$" required="required">
       <div class="invalid-feedback">Password should contain at least 8 symbols, one lowercase and one uppercase, a number and one special symbol !@#$%^&*_=+-</div>
     </div>
-    {% if user is defined %}
-      <div class="form-group">
-        <label for="confirm-password">Please confirm your current password</label>
-        <input type="password" class="form-control" id="confirm-password" required="required">
-        <div class="invalid-feedback">Password cannot be blank.</div>
-      </div>
-    {% endif %}
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 
-  <script src="/static/js/validateForm.js"></script>
-  <script src="/static/js/userDetails.js"></script>
-{% endblock %}
+  <br>
+    <p>
+      -------------- OR --------------
+    </p>
+  <br>
+  
 
+  <a class="btn btn-outline-dark" href="/login/google" role="button">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/> 
+    Sign in with Google
+  </a>
+
+</div>
+
+  <script src="/static/js/validateForm.js"></script>
+  <script src="/static/js/joinDetails.js"></script>
+{% endblock %}

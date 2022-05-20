@@ -7,7 +7,9 @@ import bcrypt
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from random import randint
 import os
+import json
 
 
 db = SQLAlchemy()
@@ -29,9 +31,13 @@ class User(db.Model):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     #password = db.Column(db.String(128), nullable=False)
-    password_hash = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    google_sign_only = db.Column(db.Boolean, default=False)
+    # google_sign_only = True, if user signed in with Google, but never created a password
+    # google_sign_only = False, otherwise 
 
-    # ratings = a list of Rating objects
+    
 
     def __repr__(self):
         return f"<User user_id={self.user_id} username={self.username} email={self.email}>"
@@ -53,40 +59,58 @@ class User(db.Model):
 
     def verify_password(self, password):
         # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+
         return bcrypt.checkpw(password, self.password_hash)
 
 
     @classmethod
     def create(cls, username, email, password):
         """Create and return a new user."""
+
         if cls.get_by_username(username) is not None:
             raise ValueError(f"Username {username} is already taken. Try again.")
         
-        if cls.get_by_email(email) is not None:
-            raise ValueError(f"Accont with email {email} already exists. Try again.")
+        # if cls.get_by_email(email) is not None:
+        #     raise ValueError(f"Accont with email {email} already exists. Try again.")
 
         return cls(email=email, username=username, password=password)
+
+    @classmethod
+    def create_google_user(cls, username, email):
+        """Create user who joined with google account and return a new user."""
+
+        while cls.get_by_username(username):
+            username += str(randint(0, 9))
+
+        return cls(email=email, username=username, password='', google_sign_only=True)
     
     @classmethod
-    def update(cls, user_id, username, email, password, confirm_password):
-        """Update and return a new user."""
+    def update_details(cls, user_id, username, description):
+        """Update user deatils and return the user."""
+
+        user = cls.get_by_id(user_id)
+
+        if user.username != username and cls.get_by_username(username) is not None:
+            raise ValueError(f"Username {username} is already taken. Try again.")
+       
+        user.username = username
+        user.description = description
+
+        return user
+
+    @classmethod
+    def update_password(cls, user_id, password, confirm_password):
+        """Update user password and return the user."""
+
         user = cls.get_by_id(user_id)
 
         if not user.verify_password(confirm_password):
             raise ValueError("Wrong current password. Try again.")
 
-        # if user.username != username and cls.query.filter_by(username=username).first() is not None:
-        if user.username != username and cls.get_by_username(username) is not None:
-            raise ValueError(f"Username {username} is already taken. Try again.")
-        
-        if user.email != email and cls.get_by_email(email) is not None:
-            raise ValueError(f"Accont with email {email} already exists. Try again.")
-
-        user.username = username
-        user.email = email
         user.password = password
 
         return user
+
 
     @classmethod
     def get_by_id(cls, user_id):
@@ -312,6 +336,72 @@ class Comment(db.Model):
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
 
+def example_data():
+    """Create some sample data."""
+
+    # In case this is run more than once, empty out existing data
+    # meta = db.metadata
+
+    # # sorted_tables returns a list of tables sorted in order of foreign key dependency, 
+    # # reversed ensure that children are deleted before parents to avoid foreign key violation.
+    # for table in reversed(meta.sorted_tables):
+    #     print(f'Clear table {table}')
+    #     db.session.execute(table.delete())
+    # db.session.commit()
+
+    # Create 3 users, store them in list so we can save them in db
+    users_in_db = []
+    for n in range(3):
+        username = f"test{n}"
+        email = f"user{n}@test.com"
+        password = f"test{n}A!!"
+        db_user = User.create(username, email, password)
+        users_in_db.append(db_user)
+
+    db.session.add_all(users_in_db)
+
+    # Load ideas data from JSON file
+    with open("data/ideas.json") as f:
+        idea_data = json.loads(f.read())
+
+    # Create ideas, store them in list so we can save them in db
+    ideas_in_db = []
+    user = users_in_db[0]
+    for idx, idea in enumerate(idea_data):
+        title, description, link = (
+            idea["title"],
+            idea["description"],
+            idea["link"],
+        )
+        modified = datetime.strptime(idea["modified"], "%Y-%m-%d")
+
+        if idx > 11:
+            user = users_in_db[1]
+
+        db_idea = Idea.create(user, title, description, link, modified)
+        ideas_in_db.append(db_idea)
+
+    db.session.add_all(ideas_in_db)
+
+    # Create votes 
+    votes_1 = [Vote.create(users_in_db[0], idea) for idea in ideas_in_db[15:]]
+    db.session.add_all(votes_1)
+    votes_2 = [Vote.create(users_in_db[1], idea) for idea in ideas_in_db[:6]]
+    db.session.add_all(votes_2)
+    votes_3 = [Vote.create(users_in_db[2], idea) for idea in ideas_in_db[::3]]
+    db.session.add_all(votes_3)
+
+    # Create comments
+    comment_descr = ["cool idea", "great idea", "not usefull", "would like to have this app", "would like to implement", "please explain in detail"]
+    comments_1 = [Comment.create(users_in_db[0], ideas_in_db[i], comment_descr[i - 12]) for i in range(12, 18)]
+    db.session.add_all(comments_1)
+    comments_2 = [Comment.create(users_in_db[1], ideas_in_db[i], comment_descr[i]) for i in range(6)]
+    db.session.add_all(comments_2)
+    comments_3 = [Comment.create(users_in_db[2], ideas_in_db[3*i + 1], comment_descr[i]) for i in range(6)]
+    db.session.add_all(comments_3)
+
+    # push all data to db
+    db.session.commit()
 
 def connect_to_db(flask_app, db_uri="postgresql:///ideas", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
@@ -332,3 +422,9 @@ if __name__ == "__main__":
     # query it executes.
 
     connect_to_db(app)
+
+    # app.config['TESTING'] = True
+    # # Connect to test database
+    # connect_to_db(app, "postgresql:///idea_testdb")
+    # db.create_all()
+    # example_data()

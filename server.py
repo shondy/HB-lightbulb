@@ -1,16 +1,141 @@
 """Server for movie ratings app."""
 
-from flask import Flask, render_template, request, flash, session, redirect, jsonify, abort
+from flask import Flask, render_template, request, flash, session, redirect, jsonify, abort, url_for
+from flask_dance.contrib.google import make_google_blueprint, google
 from model import connect_to_db, db, User, Idea, Vote, Comment
 from sqlalchemy import exc
 
 from jinja2 import StrictUndefined
 import crud
 import os
+import json
 
 app = Flask(__name__)
 app.secret_key = os.environ['APP_SECRET_KEY']
 app.jinja_env.undefined = StrictUndefined
+
+client_id = os.environ['GOOGLE_CLIENT_ID']
+client_secret = os.environ['GOOGLE_CLIENT_SECRET']
+
+
+# A Blueprint object works similarly to a Flask application object, but it is not actually an application. 
+# Rather it is a blueprint of how to construct or extend an application.
+blueprint = make_google_blueprint(
+    client_id=client_id,
+    client_secret=client_secret,
+    scope=["profile", "email"],
+    redirect_url="/login_google"
+)
+app.register_blueprint(blueprint, url_prefix="/login")
+
+@app.route("/login_google")
+def process_google_auth():
+    """Handling user authorization through Google."""
+
+    if google.authorized:
+        user_info = google.get('/oauth2/v2/userinfo')
+        if user_info.ok:
+            user_info = user_info.json()
+            user = User.get_by_email(user_info["email"])
+            if not user:
+                user = User.create_google_user(user_info["name"], user_info["email"])                
+                try:
+                    db.session.add(user)
+                    db.session.commit()
+                except exc.SQLAlchemyError as err:
+                    db.session.rollback()
+                    abort(422)
+
+            session["user_id"] = user.user_id
+
+        else:
+            flash("Cannot sign in with Google. Try again.")
+        
+        return redirect("/")
+
+@app.route("/login", methods=['GET', 'POST'])
+def process_login():
+    """Process user login."""
+
+    if request.method == 'POST':
+        email = request.json.get("email")
+        password = request.json.get("password")
+        user = User.get_by_email(email)
+
+        # if user with this email doesn't exist in db or
+        # if user never created account but only authorized with googl or
+        # if password isn't correct => abort
+        if not user or user.google_sign_only or not user.verify_password(password):
+            abort(400, "The email or password you entered was incorrect.")
+        
+        # Log in user by storing the user's id in session
+        session["user_id"] = user.user_id
+        return jsonify({"success": True})
+
+    else:
+        return render_template("login.html")
+
+
+@app.route("/logout")
+def process_logout():
+    """Process user logout."""
+
+    session.pop('user_id')
+    return redirect("/")
+
+
+@app.route("/users", methods=['GET', 'POST'])
+def join():
+    """Handle creating of a new user."""
+
+    if request.method == 'POST':
+        username = request.json.get("username")
+        email = request.json.get("email")
+        password = request.json.get("password")
+
+        user = User.get_by_email(email)
+
+        if user and not user.google_sign_only:
+            abort(400, f"This user already exists.")
+        
+        else:
+            new_user = False
+            if not user:
+                # if its a new user
+                new_user = True
+                try:
+                    user = User.create(username, email, password)
+                except ValueError as err:
+                    abort(400, err.args[0])
+
+            else: 
+                # if a user has already signed in with Google before using the same email, 
+                # but never created a password => update user username, password and set google_sign_only to false
+                if user.username != username and User.get_by_username(username):
+                    abort(400, f"Username {username} is already taken. Try again.")
+            
+                user.username = username
+                user.password = password
+                user.google_sign_only = False
+
+            try:
+                if new_user:
+                    db.session.add(user)
+                db.session.commit()
+
+                # Log in user by storing the user's id in session
+                session["user_id"] = user.user_id
+                return jsonify({ 
+                    "success": True,
+                    "joined": user.user_id
+                    })
+
+            except exc.SQLAlchemyError as err:
+                db.session.rollback()
+                abort(422)
+
+    else:
+        return render_template("join.html")
 
 
 @app.route("/")
@@ -73,10 +198,6 @@ def edit_idea(idea_id):
         link = request.json.get("link")
 
         Idea.update(idea_id, title, description, link)
-
-        idea.title = title
-        idea.description = description
-        idea.link = link
   
         try:
             db.session.commit()
@@ -106,96 +227,58 @@ def show_idea(idea_id):
     return render_template("idea_details_with_comments.html", idea=idea, comments=comments)
 
 
-@app.route("/login", methods=['GET', 'POST'])
-def process_login():
-    """Process user login."""
-
-    if request.method == 'POST':
-        email = request.json.get("email")
-        password = request.json.get("password")
-        user = User.get_by_email(email)
-    
-        if not user or not user.verify_password(password):
-            abort(400, "The email or password you entered was incorrect.")
-        
-        # Log in user by storing the user's id in session
-        session["user_id"] = user.user_id
-        return jsonify({"success": True})
-
-    else:
-        return render_template("login.html")
-
-@app.route("/logout")
-def process_logout():
-    """Process user logout."""
-
-    session.pop('user_id')
-    return redirect("/")
-
-
-@app.route("/users", methods=['GET', 'POST'])
-def register_user():
-    """Handle creating of a new user."""
-
-    if request.method == 'POST':
-        username = request.json.get("username")
-        email = request.json.get("email")
-        password = request.json.get("password")
-        print("================", username)
-
-        try:
-            user = User.create(username, email, password)
-        except ValueError as err:
-            abort(400, err.args[0])
-        
-        try:
-            db.session.add(user)
-            db.session.commit()
-            return jsonify({ 
-                "success": True,
-                "added": user.user_id
-                })
-
-        except exc.SQLAlchemyError as err:
-            db.session.rollback()
-            abort(422)
-
-    else:
-        return render_template("user_details.html", method='POST')
-
-@app.route("/users/<user_id>", methods=['GET', 'PUT'])
-def edit_user(user_id):
-    """Handle user info."""
-
+@app.route("/users/<user_id>")
+def show_user(user_id):
+    """Show user settings"""
     user = User.get_by_id(user_id)
 
-    if request.method == 'PUT':
-        """Update profile info of a user"""
+    return render_template("user_settings.html", user=user)
 
-        username = request.json.get("username")
-        email = request.json.get("email")
-        password = request.json.get("password")
-        confirm_password = request.json.get("confirmPassword")
 
-        try:
-            user = User.update(user_id, username, email, password, confirm_password)
-        except ValueError as err:
-            abort(400, err.args[0])
+@app.route("/users/<user_id>/details", methods=['PUT'])
+def edit_user_details(user_id):
+    """Update user details: username, description."""
 
-        try:
-            db.session.commit()
-            return jsonify({ 
-                "success": True,
-                "updated": user_id
-                })
+    username = request.json.get("username")
+    description = request.json.get("description")
+    try:
+        user = User.update_details(user_id, username, description)
+    except ValueError as err:
+        abort(400, err.args[0])
 
-        except exc.SQLAlchemyError as err:
-            db.session.rollback()
-            abort(422)
-        
-    else:
-        """Show user info, user ideas and ideas voted by the user"""
-        return render_template("user_details.html", method='PUT', user=user)
+    try:
+        db.session.commit()
+        return jsonify({ 
+            "success": True,
+            "updated": user_id
+            })
+
+    except exc.SQLAlchemyError as err:
+        db.session.rollback()
+        abort(422)
+
+@app.route("/users/<user_id>/password", methods=['PUT'])
+def edit_user_password(user_id):
+    """Update user password."""
+
+    password = request.json.get("password")
+    confirm_password = request.json.get("confirmPassword")
+
+    try:
+        user = User.update_password(user_id, password, confirm_password)
+    except ValueError as err:
+        abort(400, err.args[0])
+
+    try:
+        db.session.commit()
+        return jsonify({ 
+            "success": True,
+            "updated": user_id
+            })
+
+    except exc.SQLAlchemyError as err:
+        db.session.rollback()
+        abort(422)
 
 @app.route("/users/<user_id>/ideas")
 def user_ideas(user_id):
