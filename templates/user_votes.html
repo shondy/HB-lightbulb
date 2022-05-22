@@ -12,7 +12,7 @@
 
     <div class="row">
       <div class="col-6 offset-6"></div>
-        <form action="/ideas">
+        <form action="/users/{{ session['user_id'] }}/votes">
           <select name="per_page">
             <option value="5"{% if per_page == 5 %} selected="selected"{% endif %}>5</option>
             <option value="10" {% if per_page == 10 %} selected="selected"{% endif %}>10</option>

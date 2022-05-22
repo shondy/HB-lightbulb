@@ -11,6 +11,7 @@ port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
 sender_email = "lightbulb.shondy@gmail.com"
 password = os.environ['NOTIFICATION_PASSWORD']
+salt = os.environ['EMAIL_CONFIRMATION_SALT']
 
 
 def send_confirmation_email(user_email):
@@ -22,7 +23,7 @@ def send_confirmation_email(user_email):
     confirm_serializer = URLSafeTimedSerializer(os.environ['APP_SECRET_KEY'])
 
     # generate absolute url for confirmation
-    confirm_url = url_for('confirm_email', token=confirm_serializer.dumps(user_email, salt='email-confirmation-salt'), _external=True)
+    confirm_url = url_for('confirm_email', token=confirm_serializer.dumps(user_email, salt=salt), _external=True)
     
     text = f"Your account on Lightbulb app was successfully created. Please click the link below to confirm your email address and activate your account: {confirm_url}"
     html = render_template('email_confirmation.html', confirm_url=confirm_url)

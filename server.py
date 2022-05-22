@@ -18,6 +18,8 @@ app.jinja_env.undefined = StrictUndefined
 client_id = os.environ['GOOGLE_CLIENT_ID']
 client_secret = os.environ['GOOGLE_CLIENT_SECRET']
 
+salt = os.environ['EMAIL_CONFIRMATION_SALT']
+
 
 # A Blueprint object works similarly to a Flask application object, but it is not actually an application. 
 # Rather it is a blueprint of how to construct or extend an application.
@@ -142,7 +144,7 @@ def join():
 def confirm_email(token):
     try:
         confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-        email = confirm_serializer.loads(token, salt='email-confirmation-salt', max_age=3600)
+        email = confirm_serializer.loads(token, salt=salt, max_age=3600)
     except:
         flash('The confirmation link is invalid or has expired.')
         return redirect('/')
@@ -313,8 +315,9 @@ def user_ideas(user_id):
     per_page = int(request.args.get("per_page", "5"))
 
     ideas_with_votes = crud.get_user_ideas_with_votes(user_id, page, per_page)
+    user = User.get_by_id(user_id)
 
-    return render_template("user_ideas.html", ideas=ideas_with_votes, per_page=per_page)
+    return render_template("user_ideas.html", ideas=ideas_with_votes, per_page=per_page, user=user)
     
 
 @app.route("/users/<user_id>/votes")
