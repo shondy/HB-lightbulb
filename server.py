@@ -4,11 +4,12 @@ from flask import Flask, render_template, request, flash, session, redirect, jso
 from flask_dance.contrib.google import make_google_blueprint, google
 from model import connect_to_db, db, User, Idea, Vote, Comment
 from sqlalchemy import exc
+from itsdangerous import URLSafeTimedSerializer
 
 from jinja2 import StrictUndefined
 import crud
 import os
-import json
+from utils import send_confirmation_email
 
 app = Flask(__name__)
 app.secret_key = os.environ['APP_SECRET_KEY']
@@ -38,7 +39,7 @@ def process_google_auth():
             user_info = user_info.json()
             user = User.get_by_email(user_info["email"])
             if not user:
-                user = User.create_google_user(user_info["name"], user_info["email"])                
+                user = User.create_google_user(user_info["name"], user_info["email"])
                 try:
                     db.session.add(user)
                     db.session.commit()
@@ -63,11 +64,13 @@ def process_login():
         user = User.get_by_email(email)
 
         # if user with this email doesn't exist in db or
-        # if user never created account but only authorized with googl or
+        # if user has never created account but only authorized with googl or
+        # if user hasn't yet confirmed the email or
         # if password isn't correct => abort
         if not user or user.google_sign_only or not user.verify_password(password):
             abort(400, "The email or password you entered was incorrect.")
-        
+        elif not user.email_confirmed:
+            abort(400, "You have not activated your account.")
         # Log in user by storing the user's id in session
         session["user_id"] = user.user_id
         return jsonify({"success": True})
@@ -110,21 +113,19 @@ def join():
 
             else: 
                 # if a user has already signed in with Google before using the same email, 
-                # but never created a password => update user username, password and set google_sign_only to false
-                if user.username != username and User.get_by_username(username):
-                    abort(400, f"Username {username} is already taken. Try again.")
-            
-                user.username = username
-                user.password = password
-                user.google_sign_only = False
+                # but never created a password => update user username, password, email_confirmation_sent_on,
+                # and set google_sign_only to false
+                try:
+                    User.update_google_signed_to_unconfirmed(user.user_id, username, password)
+                except ValueError as err:
+                    abort(400, err.args[0])
 
             try:
                 if new_user:
                     db.session.add(user)
                 db.session.commit()
 
-                # Log in user by storing the user's id in session
-                session["user_id"] = user.user_id
+                send_confirmation_email(user.email)
                 return jsonify({ 
                     "success": True,
                     "joined": user.user_id
@@ -137,6 +138,30 @@ def join():
     else:
         return render_template("join.html")
 
+@app.route("/confirm_email/<token>")
+def confirm_email(token):
+    try:
+        confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        email = confirm_serializer.loads(token, salt='email-confirmation-salt', max_age=3600)
+    except:
+        flash('The confirmation link is invalid or has expired.')
+        return redirect('/')
+    
+    user = User.get_by_email(email)
+    
+    if user.email_confirmed:
+        flash('Account already confirmed. Please login.')
+    else:
+        User.confirm_email(user.user_id) 
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash('Thank you for confirming your email address!')
+        except exc.SQLAlchemyError as err:
+                db.session.rollback()
+                abort(422)    
+ 
+    return redirect('/')
 
 @app.route("/")
 def homepage():

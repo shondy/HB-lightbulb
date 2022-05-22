@@ -25,6 +25,7 @@ formJoin.addEventListener('submit', (evt) => {
   .then((response) => response.json())
   .then((responseJson) => {
     if (responseJson.success) {
+      alert("Thanks for registering! Please check your email to confirm your email address.")
       window.open(`/`, '_self');
     }
     else if (responseJson.error === 400) {

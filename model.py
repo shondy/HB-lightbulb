@@ -4,22 +4,13 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 import bcrypt
-import smtplib, ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from utils import send_email
 from random import randint
-import os
 import json
 
 
-db = SQLAlchemy()
 
-url_ideas ="http://localhost:5000/ideas/"
-port = 465  # For SSL
-smtp_server = "smtp.gmail.com"
-sender_email = "lightbulb.shondy@gmail.com"
-password = os.environ['NOTIFICATION_PASSWORD']
-context = ssl.create_default_context()
+db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -30,14 +21,15 @@ class User(db.Model):
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    #password = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(100))
     description = db.Column(db.Text)
-    google_sign_only = db.Column(db.Boolean, default=False)
     # google_sign_only = True, if user signed in with Google, but never created a password
     # google_sign_only = False, otherwise 
-
+    google_sign_only = db.Column(db.Boolean, default=False)
+    email_confirmed = db.Column(db.Boolean, default=False)
+    email_confirm_date = db.Column(db.DateTime)
     
+
 
     def __repr__(self):
         return f"<User user_id={self.user_id} username={self.username} email={self.email}>"
@@ -75,6 +67,25 @@ class User(db.Model):
 
         return cls(email=email, username=username, password=password)
 
+    
+    @classmethod
+    def get_by_id(cls, user_id):
+        """Return a user by primary key."""
+
+        return cls.query.get(user_id)
+
+    @classmethod
+    def get_by_email(cls, email):
+        """Return a user by email."""
+
+        return cls.query.filter_by(email=email).first()
+    
+    @classmethod
+    def get_by_username(cls, username):
+        """Return a user by username."""
+
+        return cls.query.filter_by(username=username).first()
+
     @classmethod
     def create_google_user(cls, username, email):
         """Create user who joined with google account and return a new user."""
@@ -111,25 +122,28 @@ class User(db.Model):
 
         return user
 
+    @classmethod
+    def update_google_signed_to_unconfirmed(cls, user_id, username, password):
+        """if user initially signed with Google and joined with email&password, 
+        update user email_confirmation_sent_on and google_sign_only to False."""
+
+        user = cls.get_by_id(user_id)
+
+        if user.username != username and User.get_by_username(username):
+            abort(400, f"Username {username} is already taken. Try again.")
+
+        user.username = username
+        user.password = password
+        user.google_sign_only = False
+        user.email_confirmation_sent_on = datetime.now()
+
+        return user
 
     @classmethod
-    def get_by_id(cls, user_id):
-        """Return a user by primary key."""
-
-        return cls.query.get(user_id)
-
-    @classmethod
-    def get_by_email(cls, email):
-        """Return a user by email."""
-
-        return cls.query.filter_by(email=email).first()
-    
-    @classmethod
-    def get_by_username(cls, username):
-        """Return a user by username."""
-
-        return cls.query.filter_by(username=username).first()
-
+    def confirm_email(cls, user_id):
+        user = cls.get_by_id(user_id)
+        user.email_confirmed = True
+        user.email_confirmed_on = datetime.now()
 
 
 class Idea(db.Model):
@@ -291,14 +305,9 @@ class Comment(db.Model):
         return cls.query.filter(cls.user_id == user_id).order_by(cls.modified.desc()).all()
 
     def email_notification(self):
-        # send an email notification to the user whose idea has been commented on
+        """ send an email notification to the user whose idea has been commented on """
+        
         receiver_email = self.idea.user.email
-
-        message = MIMEMultipart("alternative")
-
-        message["Subject"] = "LightBulb notification"
-        message["From"] = sender_email
-        message["To"] = receiver_email
         
         text = f"""\
         Hi {self.idea.user.username},
@@ -306,35 +315,14 @@ class Comment(db.Model):
         There is a new/updated comment to your idea {self.idea.title} {url_ideas}{self.idea_id}/comments:
         {self.description}"""
 
-        html = f"""\
-        <html>
-        <body>
-            <p>
-                Hi {self.idea.user.username},
-            </p>
-            <p>
-                There is a new/updated comment to your idea <a href="{url_ideas}{self.idea_id}/comments">{self.idea.title}</a> :
-            </p>
-            <p>
-                {self.description}
-            </p>
-        </body>
-        </html>
-        """
-
-        # Turn these into plain/html MIMEText objects
-        part1 = MIMEText(text, "plain")
-        part2 = MIMEText(html, "html")
-
-        # Add HTML/plain-text parts to MIMEMultipart message, which is the MIMEMultipart("alternative") instance
-        # The email client will try to render the last part first
-        message.attach(part1)
-        message.attach(part2)
-
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message.as_string())
+        html = render_template(
+            'user_idea_notification.html', 
+            username=self.idea.user.username, 
+            idea_url=f"http://localhost:5000/ideas/{self.idea_id}/comments", 
+            idea_title=self.idea.title,
+            comment_description=self.description)
+        
+        send_email(text, html, "LightBulb notification", receiver_email)
 
 def example_data():
     """Create some sample data."""
