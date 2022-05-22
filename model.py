@@ -1,6 +1,7 @@
 """Models for movie ratings app."""
 
 from datetime import datetime
+from flask import render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 import bcrypt
@@ -312,7 +313,7 @@ class Comment(db.Model):
         text = f"""\
         Hi {self.idea.user.username},
 
-        There is a new/updated comment to your idea {self.idea.title} {url_ideas}{self.idea_id}/comments:
+        There is a new/updated comment to your idea {self.idea.title} http://localhost:5000/ideas/{self.idea_id}/comments:
         {self.description}"""
 
         html = render_template(
@@ -321,6 +322,7 @@ class Comment(db.Model):
             idea_url=f"http://localhost:5000/ideas/{self.idea_id}/comments", 
             idea_title=self.idea.title,
             comment_description=self.description)
+
         
         send_email(text, html, "LightBulb notification", receiver_email)
 
