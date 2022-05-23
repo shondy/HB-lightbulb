@@ -10,11 +10,11 @@ const showWindowForComment = url => {
             height=500`);
 };
 
-const addCommentButton = document.querySelector('#add-comment');
+const addCommentButton = document.querySelector('.add-comment');
 
 addCommentButton.addEventListener('click', (evt) => {
 // check first if user loged in and open a window with comment form
-  if (evt.target.classList.contains('active')) {
+  if (evt.target.parentElement.classList.contains('active')) {
     const idea_id = location.pathname.split('/')[2];
     const url = `/comments/${idea_id}`;
     showWindowForComment(url);
@@ -31,7 +31,7 @@ for (button of editCommentButtons){
   button.addEventListener('click', (evt) => {
     // open comment form 
     const idea_id = location.pathname.split('/')[2];
-    const comment_id = evt.target.id;
+    const comment_id = evt.target.parentElement.id;
     const url = `/comments/${idea_id}/${comment_id}`;
     showWindowForComment(url);
   });
@@ -42,7 +42,7 @@ const deleteCommentButtons = document.querySelectorAll('.delete-comment');
 for (button of deleteCommentButtons){
   button.addEventListener('click', (evt) => {
     const idea_id = location.pathname.split('/')[2];
-    const comment_id = evt.target.id;
+    const comment_id = evt.target.parentElement.id;
     const url = `/comments/${idea_id}/${comment_id}`;
     fetch(`${url}`, {
       method: 'DELETE',

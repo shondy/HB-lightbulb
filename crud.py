@@ -26,26 +26,25 @@ def get_ideas_with_votes(user_id, page, per_page):
     return ideas_with_votes
 
 
-def get_idea_with_votes(user_id, idea_id):
+def get_idea_votes(user_id, idea_id):
     """Return all ideas with total votes and votes made by user on the page."""
     if user_id is None:
-        idea_with_votes = db.session.query(
+        idea_votes = db.session.query(
             Idea.idea_id, 
-            Idea.title, 
             func.count(Vote.vote_id).label("total_votes")
-            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id.desc()).paginate(page, per_page, error_out = False)
+            ).outerjoin(Vote).filter(Idea.idea_id==idea_id).group_by(Idea.idea_id).first()
 
 
     else:
-        ideas_with_votes = db.session.query(
+        idea_votes = db.session.query(
             Idea.idea_id, 
             Idea.title, 
             func.count(Vote.vote_id).label("total_votes"),
             func.count(case(
             [((Vote.user_id == user_id), 1)])).label("user_vote")
-            ).outerjoin(Vote).group_by(Idea.idea_id).order_by(Idea.idea_id.desc()).paginate(page, per_page, error_out = False)
+            ).outerjoin(Vote).filter(Idea.idea_id==idea_id).group_by(Idea.idea_id).first()
 
-    return idea_with_votes
+    return idea_votes
 
 def get_user_ideas_with_votes(user_id, page, per_page):
     """Return all ideas made by user with total votes on the page."""

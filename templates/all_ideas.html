@@ -11,13 +11,15 @@
     </div>
 
     
-    {% if session.get('user_id') %}
     <div class="row">
       <div class="col-3 offset-9">
-        <a class="btn btn-secondary btn-lg active" href="/ideas" role="button">Add your idea</a>
+        {% if session.get('user_id') %}
+          <button class="btn btn-secondary btn-sm active add-idea">Add your idea</button>
+        {% else %}
+        <button class="btn btn-secondary btn-sm add-idea">Add your idea</button>
+        {% endif %}
       </div>
     </div> 
-    {% endif %}
 
     <div class="row">
       <div class="col-12">
@@ -39,9 +41,9 @@
               <td>
                 {% if session.get('user_id') %}          
                   {% if idea.user_vote == 1 %}                
-                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: green"></i></a>
+                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: green"></i></a>
                   {% else %}
-                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: lightgray"></i></a>
+                    <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: lightgray"></i></a>
                   {% endif %}
                 {% endif %}
                 <span class='total-votes {{idea.idea_id}}'>{{ idea.total_votes }}</span> votes 
@@ -78,4 +80,5 @@
   </div>
   
   <script src="/static/js/handleVote.js"></script>
+  <script src="/static/js/handleIdea.js"></script>
 {% endblock %}

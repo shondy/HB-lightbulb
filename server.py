@@ -250,8 +250,10 @@ def show_idea(idea_id):
 
     idea = Idea.get_by_id(idea_id)
     comments = Comment.get_by_idea_id(idea_id)
+    idea_votes = crud.get_idea_votes(session.get("user_id"), idea_id)
+    print("=================idea_votes", idea_votes)
 
-    return render_template("idea_details_with_comments.html", idea=idea, comments=comments)
+    return render_template("idea_details_with_comments.html", idea=idea, comments=comments, idea_votes=idea_votes)
 
 
 @app.route("/users/<user_id>")
