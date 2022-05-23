@@ -35,13 +35,24 @@
       <div class="col-12">
         {% if session.get('user_id') %}
         <!-- <button class="btn btn-secondary btn-lg {{ 'active' if session.get('user_id') else '' }}" id="add-comment">Add your comment</button> -->
-          <button class="btn btn-secondary btn-lg active" id="add-comment">Add your comment</button>
-          {% if session['user_id'] == idea.user_id %}
+          % if session['user_id'] == idea.user_id %}
             <a class="btn btn-secondary btn-lg active" href="/ideas/{{ idea.idea_id }}" role="button">Edit your idea</a>
           {% endif %}
+          {% if idea.user_vote == 1 %}                
+            <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: green"></i></a>
+          {% else %}
+            <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size: 1rem; color: lightgray"></i></a>
+          {% endif %}
+
+
+          <button class="btn btn-secondary btn-lg active" id="add-comment">Add your comment</button>
+          {
         {% else %}
           <button class="btn btn-secondary btn-lg" id="add-comment">Add your comment</button>
+          <i class='far fa-comment-alt' style='font-size:36px'></i>
         {% endif %}
+        <!-- <span class='total-votes {{idea.idea_id}}'>{{ idea.total_votes }}</span> votes  -->
+
       </div>
     </div>
 
@@ -56,7 +67,10 @@
           {% for comment in comments %}
             <li>
               <p>
-                {{ comment.user.username }}
+                <a href="/users/{{ comment.user_id }}/ideas">
+                  {{ comment.user.username }}
+                </a>
+                <i>last modified: {{ comment.modified.strftime('%Y-%m-%d') }}</i>
                 {% if session.get('user_id') and comment.user_id == session['user_id'] %}
                   <button type="button" class="btn btn-secondary btn-sm active edit-comment" id="{{ comment.comment_id}}">Edit</button>
                   <button type="button" class="btn btn-secondary btn-sm active delete-comment" id="{{ comment.comment_id}}">Delete</button>

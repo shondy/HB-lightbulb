@@ -317,7 +317,9 @@ def user_ideas(user_id):
     ideas_with_votes = crud.get_user_ideas_with_votes(user_id, page, per_page)
     user = User.get_by_id(user_id)
 
-    return render_template("user_ideas.html", ideas=ideas_with_votes, per_page=per_page, user=user)
+    most_voted_idea = crud.get_most_voted_user_idea(user_id)
+
+    return render_template("user_ideas.html", ideas=ideas_with_votes, per_page=per_page, user=user, most_voted_idea=most_voted_idea)
     
 
 @app.route("/users/<user_id>/votes")

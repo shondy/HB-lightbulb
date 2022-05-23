@@ -42,10 +42,9 @@ for idea in idea_data:
         idea["description"],
         idea["link"],
     )
-    modified = datetime.strptime(idea["modified"], "%Y-%m-%d")
     user = choice(users_in_db)
 
-    db_idea = model.Idea.create(user, title, description, link, modified)
+    db_idea = model.Idea.create(user, title, description, link)
     ideas_in_db.append(db_idea)
 
 model.db.session.add_all(ideas_in_db)

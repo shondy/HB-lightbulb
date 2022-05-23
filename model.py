@@ -29,7 +29,7 @@ class User(db.Model):
     google_sign_only = db.Column(db.Boolean, default=False)
     email_confirmed = db.Column(db.Boolean, default=False)
     email_confirm_date = db.Column(db.DateTime)
-    
+    created = db.Column(db.DateTime)
 
 
     def __repr__(self):
@@ -66,7 +66,9 @@ class User(db.Model):
         # if cls.get_by_email(email) is not None:
         #     raise ValueError(f"Accont with email {email} already exists. Try again.")
 
-        return cls(email=email, username=username, password=password)
+        created = datetime.now()
+
+        return cls(email=email, username=username, password=password, created=created)
 
     
     @classmethod
@@ -166,11 +168,10 @@ class Idea(db.Model):
         return f"<Idea idea_id={self.idea_id} title={self.title}>"
 
     @classmethod
-    def create(cls, user, title, description, link = None, modified=None):
+    def create(cls, user, title, description, link = None):
         """Create and return a new idea."""
 
-        if not modified:
-            modified = datetime.now()
+        modified = datetime.now()
             
         return cls(
             user=user,
