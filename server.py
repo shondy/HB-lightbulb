@@ -176,12 +176,15 @@ def ideas_per_page():
     """View all ideas with pagination."""
 
     page = int(request.args.get("page", "1"))
-    per_page = int(request.args.get("per_page", "5"))
+    per_page = int(request.args.get("per_page", "10"))
 
-    # ideas = Idea.get_ideas_per_page(page, per_page)
-    ideas_with_votes = crud.get_ideas_with_votes(session.get("user_id"), page, per_page)
+    search = request.args.get("search", "")
+    sort = request.args.get("sort", "latest")
 
-    return render_template("all_ideas.html", ideas=ideas_with_votes, per_page=per_page)
+    ideas_with_votes = crud.get_ideas_with_votes_for_search(session.get("user_id"), search, sort, page, per_page)
+    
+
+    return render_template("all_ideas.html", ideas=ideas_with_votes, per_page=per_page, search=search, sort=sort)
 
 @app.route("/ideas", methods=['GET', 'POST'])
 def create_idea():
@@ -251,7 +254,6 @@ def show_idea(idea_id):
     idea = Idea.get_by_id(idea_id)
     comments = Comment.get_by_idea_id(idea_id)
     idea_votes = crud.get_idea_votes(session.get("user_id"), idea_id)
-    print("=================idea_votes", idea_votes)
 
     return render_template("idea_details_with_comments.html", idea=idea, comments=comments, idea_votes=idea_votes)
 
@@ -314,7 +316,7 @@ def user_ideas(user_id):
     """Show all ideas created by user."""
 
     page = int(request.args.get("page", "1"))
-    per_page = int(request.args.get("per_page", "5"))
+    per_page = int(request.args.get("per_page", "10"))
 
     ideas_with_votes = crud.get_user_ideas_with_votes(user_id, page, per_page)
     user = User.get_by_id(user_id)
@@ -329,7 +331,7 @@ def user_votes(user_id):
     """Show all ideas user voted for."""
 
     page = int(request.args.get("page", "1"))
-    per_page = int(request.args.get("per_page", "5"))
+    per_page = int(request.args.get("per_page", "10"))
 
     ideas_with_votes = crud.get_voted_by_user_ideas_with_votes(user_id, page, per_page)
 

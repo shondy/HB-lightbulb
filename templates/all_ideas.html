@@ -10,9 +10,29 @@
       </div>
     </div>
 
-    
     <div class="row">
-      <div class="col-3 offset-9">
+      <form id="search" action="/all-ideas">
+        <div class="col-12 col-md-8">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search for an idea" name="search" value="{{ search if search else ''}}">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit"><i class="fa fa-search fa_custom fa-2x"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 col-md-4">
+          <label for="sort">Sorted by</label>
+
+          <select class="form-select-lg mb-3" name="sort" id="sort">
+              <option value="latest" {% if sort=="latest" %} selected {% endif %}>Latest</option>
+              <option value="votes"  {% if sort=="votes" %} selected {% endif %}>Votes</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
         {% if session.get('user_id') %}
           <button class="btn btn-secondary btn-sm active add-idea">Add your idea</button>
         {% else %}
@@ -59,9 +79,9 @@
       <div class="col-6">
         <form action="/all-ideas">
           <select name="per_page">
-            <option value="5"{% if per_page == 5 %} selected="selected"{% endif %}>5</option>
             <option value="10" {% if per_page == 10 %} selected="selected"{% endif %}>10</option>
             <option value="20" {% if per_page == 20 %} selected="selected"{% endif %}>20</option>
+            <option value="50" {% if per_page == 50 %} selected="selected"{% endif %}>50</option>
           </select>
           <input type="submit" value="Results per page">
         </form>
@@ -81,4 +101,5 @@
   
   <script src="/static/js/handleVote.js"></script>
   <script src="/static/js/handleIdea.js"></script>
+  <script src="/static/js/handleSearch.js"></script>
 {% endblock %}
