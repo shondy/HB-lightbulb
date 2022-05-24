@@ -50,19 +50,19 @@
         </table>
 
         <form action="/users/{{ user.user_id }}/ideas">
-          <select name="per_page">
-            <option value="10"{% if per_page == 10 %} selected="selected"{% endif %}>10</option>
-            <option value="20" {% if per_page == 20 %} selected="selected"{% endif %}>20</option>
-            <option value="50" {% if per_page == 50 %} selected="selected"{% endif %}>50</option>
+          <select name="perpage">
+            <option value="10"{% if perpage == 10 %} selected="selected"{% endif %}>10</option>
+            <option value="20" {% if perpage == 20 %} selected="selected"{% endif %}>20</option>
+            <option value="50" {% if perpage == 50 %} selected="selected"{% endif %}>50</option>
           </select>
           <input type="submit" value="Results per page">
         </form>
 
         <div>
-          <a href="/users/{{ user.user_id }}/ideas?page={{ 1 }}&per_page={{ per_page }}"> First </a> |
-          {% if ideas.has_prev %}<a href="/users/{{ user.user_id }}/ideas?page={{ ideas.prev_num }}&per_page={{ per_page }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
-          {% if ideas.has_next %}<a href="/users/{{ user.user_id }}/ideas?page={{ ideas.next_num }}&per_page={{ per_page }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
-          {% if ideas.pages > 1 %}<a href="/users/{{ user.user_id }}/ideas?page={{ ideas.pages }}&per_page={{ per_page }}"> Last </a>{% else %} Last {% endif %}
+          <a href="/users/{{ user.user_id }}/ideas?page={{ 1 }}&perpage={{ perpage }}"> First </a> |
+          {% if ideas.has_prev %}<a href="/users/{{ user.user_id }}/ideas?page={{ ideas.prev_num }}&perpage={{ perpage }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
+          {% if ideas.has_next %}<a href="/users/{{ user.user_id }}/ideas?page={{ ideas.next_num }}&perpage={{ perpage }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
+          {% if ideas.pages > 1 %}<a href="/users/{{ user.user_id }}/ideas?page={{ ideas.pages }}&perpage={{ perpage }}"> Last </a>{% else %} Last {% endif %}
         </div>
       </div>
     </div>
