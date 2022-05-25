@@ -86,13 +86,16 @@
 
       <div class="row">
         <div class="col-12">
-          <a href="/all-ideas?page={{ 1 }}&perpage={{ perpage }}"> First </a> |
-          {% if ideas.has_prev %}<a href="/all-ideas?page={{ ideas.prev_num }}&perpage={{ perpage }}">&lt;&lt; Previous </a>{% else %}&lt;&lt; Previous {% endif %} | 
-          {% if ideas.has_next %}<a href="/all-ideas?page={{ ideas.next_num }}&perpage={{ perpage }}">Next &gt;&gt;</a>{% else %}Next &gt;&gt;{% endif %} |
-          {% if ideas.pages > 1 %}<a href="/all-ideas?page={{ ideas.pages }}&perpage={{ perpage }}"> Last </a>{% else %} Last {% endif %}
+          <a href="#" class="page 1"> First </a> |
+          {% if ideas.has_prev %}<a href="#" class="page {{ ideas.prev_num }}">&lt;&lt; Previous </a>
+          {% else %}&lt;&lt; Previous {% endif %} | 
+          {% if ideas.has_next %}<a href="#" class="page {{ ideas.next_num }}">Next &gt;&gt;</a>
+          {% else %}Next &gt;&gt;{% endif %} |
+          {% if ideas.pages > 1 %}<a href="#" class="page {{ ideas.pages }}"> Last </a>
+          {% else %} Last {% endif %}
         </div>
       </div>
-
+      <input id="page" type="hidden" name="page" value="1">
     </div>
   </form>
   
