@@ -66,17 +66,18 @@ def get_ideas_with_votes_for_search(user_id, search, sort, page, perpage):
     """Return all ideas with total votes and votes made by user on the page 
     which title and description contain words from search."""
 
-    words = search.split()
-    search = "|".join(words)
+    ideas_with_votes = Idea.query.msearch(search, fields=['title', 'description']).outerjoin(Vote)
+    ideas = Idea.query.msearch(search, fields=['title', 'description']).all()
+    print("ideas=================", ideas, len(ideas))
 
     if user_id is None:
-        ideas_with_votes = db.session.query(
+        ideas_with_votes = ideas_with_votes.add_columns(
                     Idea.idea_id, 
                     Idea.title, 
                     func.count(Vote.vote_id).label("total_votes")
                     )
     else:
-        ideas_with_votes = db.session.query(
+        ideas_with_votes = ideas_with_votes.add_columns(
                     Idea.idea_id, 
                     Idea.title, 
                     func.count(Vote.vote_id).label("total_votes"),
@@ -84,26 +85,20 @@ def get_ideas_with_votes_for_search(user_id, search, sort, page, perpage):
                     [((Vote.user_id == user_id), 1)])).label("user_vote")
                     )
 
-    ideas_with_votes = ideas_with_votes.outerjoin(Vote
-    ).group_by(Idea.idea_id
-    ).filter(or_(
-        Idea.title.op("~*")(search),
-        Idea.description.op("~*")(search))
-    )
+    ideas_with_votes = ideas_with_votes.group_by(Idea.idea_id)
+
+    # print("ideas_with_votes=========", ideas_with_votes.all())
 
     if sort == "latest":
-        ideas_with_votes = ideas_with_votes.order_by(
-            Idea.modified.desc()
-            ).paginate(page, perpage, error_out = False)
-    else: # sort == "votes"
+        ideas_with_votes = ideas_with_votes.order_by(Idea.modified.desc())
+    elif sort == "votes":
         ideas_with_votes = ideas_with_votes.order_by(
             func.count(Vote.vote_id).desc(), 
             Idea.modified.desc()
-            ).paginate(page, perpage, error_out = False)
+            )
 
-
-    return ideas_with_votes
-
+    return ideas_with_votes.paginate(page, perpage, error_out = False)
+    
 
 
 if __name__ == "__main__":

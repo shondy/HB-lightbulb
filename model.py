@@ -8,7 +8,7 @@ import bcrypt
 from utils import send_email
 from random import randint
 import json
-
+from flask_msearch import Search
 
 
 db = SQLAlchemy()
@@ -151,8 +151,9 @@ class User(db.Model):
 
 class Idea(db.Model):
     """An idea."""
-
+    
     __tablename__ = "ideas"
+    __searchable__ = ["title", "description"]
 
     idea_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -397,10 +398,23 @@ def example_data():
 def connect_to_db(flask_app, db_uri="postgresql:///ideas", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
     flask_app.config["SQLALCHEMY_ECHO"] = echo
-    flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # flask-msearch will use table name as elasticsearch index name
+    MSEARCH_INDEX_NAME = 'msearch'
+    # table's primary key
+    MSEARCH_PRIMARY_KEY = 'id'
+    MSEARCH_ENABLE = True
+    # SQLALCHEMY_TRACK_MODIFICATIONS must be set to True when msearch auto index is enabled
+    flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+
 
     db.app = flask_app
     db.init_app(flask_app)
+
+    
+    search = Search()
+    search.init_app(flask_app)
+
 
     print("Connected to the db!")
 

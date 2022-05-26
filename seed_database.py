@@ -22,7 +22,8 @@ users_in_db = []
 for n in range(10):
     username = f"test{n}"
     email = f"user{n}@test.com"
-    password = f"test{n}"
+    description = f"I'm a test user {n}. Happy to be useful."
+    password = f"test{n}A!!"
 
     db_user = model.User.create(username, email, password)
     users_in_db.append(db_user)

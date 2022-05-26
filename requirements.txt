@@ -5,6 +5,7 @@ click==8.0.1
 Flask==2.1.2
 Flask-Dance==6.0.0
 Flask-DebugToolbar==0.11.0
+flask-msearch==0.2.9.2
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.0
 idna==3.3
@@ -22,10 +23,3 @@ urllib3==1.26.9
 URLObject==2.4.3
 Werkzeug==2.0.1
 zipp==3.8.0
-
-
-
-
-
-
-
