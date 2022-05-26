@@ -9,6 +9,17 @@ from utils import send_email
 from random import randint
 import json
 from flask_msearch import Search
+from whoosh.analysis import RegexTokenizer, Filter
+from whoosh.fields import TEXT
+
+class CaseSensitivizer(Filter):
+    def __call__(self, tokens):
+        for t in tokens:
+            yield t
+            text = t.text.lower()
+            if text != t.text:
+                t.text = text
+                yield t
 
 
 db = SQLAlchemy()
@@ -154,6 +165,17 @@ class Idea(db.Model):
     
     __tablename__ = "ideas"
     __searchable__ = ["title", "description"]
+    __msearch_schema__ = {
+                "title": TEXT(
+                    stored=True,
+                    analyzer=RegexTokenizer() | CaseSensitivizer(),
+                    sortable=False),
+                "description": TEXT(
+                    stored=True,
+                    analyzer=RegexTokenizer() | CaseSensitivizer(),
+                    sortable=False,
+                )
+            }
 
     idea_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -400,10 +422,12 @@ def connect_to_db(flask_app, db_uri="postgresql:///ideas", echo=True):
     flask_app.config["SQLALCHEMY_ECHO"] = echo
 
     # flask-msearch will use table name as elasticsearch index name
-    MSEARCH_INDEX_NAME = 'msearch'
+    flask_app.config["MSEARCH_INDEX_NAME"] = 'msearch'
+    # simple,whoosh,elaticsearch, default is simple
+    flask_app.config["MSEARCH_BACKEND"] = 'whoosh'
     # table's primary key
-    MSEARCH_PRIMARY_KEY = 'id'
-    MSEARCH_ENABLE = True
+    flask_app.config["MSEARCH_PRIMARY_KEY"] = 'idea_id'
+    flask_app.config["MSEARCH_ENABLE"] = True
     # SQLALCHEMY_TRACK_MODIFICATIONS must be set to True when msearch auto index is enabled
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
@@ -412,9 +436,8 @@ def connect_to_db(flask_app, db_uri="postgresql:///ideas", echo=True):
     db.init_app(flask_app)
 
     
-    search = Search()
+    search = Search(db=db)
     search.init_app(flask_app)
-
 
     print("Connected to the db!")
 

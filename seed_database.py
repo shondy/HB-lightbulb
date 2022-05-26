@@ -16,6 +16,7 @@ os.system("createdb ideas")
 
 model.connect_to_db(server.app)
 model.db.create_all()
+# model.search.create_index()
 
 # Create 10 users
 users_in_db = []

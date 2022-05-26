@@ -66,9 +66,10 @@ def get_ideas_with_votes_for_search(user_id, search, sort, page, perpage):
     """Return all ideas with total votes and votes made by user on the page 
     which title and description contain words from search."""
 
-    ideas_with_votes = Idea.query.msearch(search, fields=['title', 'description']).outerjoin(Vote)
-    ideas = Idea.query.msearch(search, fields=['title', 'description']).all()
-    print("ideas=================", ideas, len(ideas))
+    if search == "":
+        ideas_with_votes = Idea.query.outerjoin(Vote)
+    else:
+        ideas_with_votes = Idea.query.msearch(search, fields=['title', 'description']).outerjoin(Vote)
 
     if user_id is None:
         ideas_with_votes = ideas_with_votes.add_columns(
