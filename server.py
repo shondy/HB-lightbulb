@@ -181,10 +181,15 @@ def ideas_per_page():
     search = request.args.get("search", "")
     sort = request.args.get("sort", "latest")
 
-    ideas_with_votes = crud.get_ideas_with_votes_for_search(session.get("user_id"), search, sort, page, perpage)
-    
+    ideas_with_votes = crud.get_ideas_with_votes_filtered(session.get("user_id"), search, sort, page, perpage)
 
-    return render_template("all_ideas.html", ideas=ideas_with_votes, perpage=perpage, search=search, sort=sort)
+    return render_template("ideas.html", 
+    ideas=ideas_with_votes, 
+    title="Ideas",
+    search=search, 
+    sort=sort, 
+    perpage=perpage, 
+    action="/all-ideas")
 
 @app.route("/ideas", methods=['GET', 'POST'])
 def create_idea():
@@ -318,13 +323,24 @@ def user_ideas(user_id):
     page = int(request.args.get("page", "1"))
     perpage = int(request.args.get("perpage", "10"))
 
-    ideas_with_votes = crud.get_user_ideas_with_votes(user_id, page, perpage)
+    search = request.args.get("search", "")
+    sort = request.args.get("sort", "latest")
+
+    ideas_with_votes = crud.get_user_ideas_with_votes_filtered(user_id, session.get("user_id"), search, sort, page, perpage)
     user = User.get_by_id(user_id)
 
     most_voted_idea = crud.get_most_voted_user_idea(user_id)
 
-    return render_template("user_ideas.html", ideas=ideas_with_votes, perpage=perpage, user=user, most_voted_idea=most_voted_idea)
-    
+    return render_template("ideas.html", 
+    ideas=ideas_with_votes, 
+    title="Your ideas",
+    user=user, 
+    most_voted_idea=most_voted_idea, 
+    search=search, 
+    sort=sort,
+    perpage=perpage,
+    action = f"/users/{user_id}/ideas")
+
 
 @app.route("/users/<user_id>/votes")
 def user_votes(user_id):
@@ -333,9 +349,18 @@ def user_votes(user_id):
     page = int(request.args.get("page", "1"))
     perpage = int(request.args.get("perpage", "10"))
 
-    ideas_with_votes = crud.get_voted_by_user_ideas_with_votes(user_id, page, perpage)
+    search = request.args.get("search", "")
+    sort = request.args.get("sort", "latest")
 
-    return render_template("user_votes.html", ideas=ideas_with_votes, perpage=perpage)
+    ideas_with_votes = crud.get_voted_by_user_ideas_with_votes_filtered(user_id, search, sort, page, perpage)
+
+    return render_template("ideas.html", 
+    ideas=ideas_with_votes, 
+    title="Ideas you voted for",
+    perpage=perpage, 
+    search=search, 
+    sort=sort,
+    action=f"/users/{user_id}/votes")
 
 
 

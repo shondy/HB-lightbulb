@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}All User Ideas{% endblock %}
+
+{% block body %}
+  <form id="filter" action="{{ action }}">
+    <div class="container-fluid">
+      <div class="row">
+        {% if user is defined and not (session.get('user_id') and session["user_id"]==user.user_id) %}
+        <div class="col-12 col-md-3 order-md-1">
+          <div class="border-bottom"><br>{{ user.username }}</div>
+          <div class="border-bottom"><br>User since: {{ user.created.strftime('%Y-%m-%d') }}</div>
+          {% if user.description %}
+            <div class="border-bottom"><br>{{ user.description }}</div>
+          {% endif %}
+          {% if most_voted_idea %}
+          <div class="border-bottom"><br>Most Voted Idea: {{ most_voted_idea.title }}</div>
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-md-9 order-md-2">
+          <h2>Ideas</h2>
+        {% else %}
+        <div class="col-12">
+          <h2>{{ title }}</h2>
+        {% endif %}
+
+
+        <div class="row">
+          <div class="col-12 col-md-8">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Search for an idea" name="search" value="{{ search if search else ''}}">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="search"><i class="fa fa-search fa_custom fa-2x"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 col-md-4">
+            <label for="sort">Sorted by</label>
+  
+            <select class="form-select-lg mb-3" name="sort" id="sort">
+                <option value="latest" {% if sort=="latest" %} selected {% endif %}>Latest</option>
+                <option value="votes" {% if sort=="votes" %} selected {% endif %}>Votes</option>
+                <option value="relevance" {% if sort=="relevance" %} selected {% endif %}>Relevance</option>
+            </select>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col-12">
+            {% if session.get('user_id') %}
+              <button class="btn btn-secondary btn-sm active add-idea">Add your idea</button>
+            {% else %}
+            <button class="btn btn-secondary btn-sm add-idea">Add your idea</button>
+            {% endif %}
+          </div>
+        </div> 
+  
+        <div class="row">
+          <div class="col-12">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Ideas</th>
+                  <th scope="col">Votes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for idea in ideas.items %}
+                <tr>
+                  <td>
+                    <a href="/ideas/{{ idea[0].idea_id }}/comments">
+                      {{ idea[0].title }}
+                    </a>
+                  </td>
+                  <td>
+                    {% if session.get('user_id') %}          
+                      {% if idea.user_vote == 1 %}                
+                        <a href="#" class='vote {{idea[0].idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: green"></i></a>
+                      {% else %}
+                        <a href="#" class='vote {{idea[0].idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: lightgray"></i></a>
+                      {% endif %}
+                    {% endif %}
+                    <span class='total-votes {{idea[0].idea_id}}'>{{ idea.total_votes }}</span> votes 
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      
+        <div class="row">
+          <div class="col-6">
+              <select name="perpage" id="perpage">
+                <option value="10" {% if perpage == 10 %} selected="selected"{% endif %}>10</option>
+                <option value="20" {% if perpage == 20 %} selected="selected"{% endif %}>20</option>
+                <option value="50" {% if perpage == 50 %} selected="selected"{% endif %}>50</option>
+              </select>
+          </div>
+        </div>
+  
+        <div class="row">
+          <div class="col-12">
+            <a href="#" class="page 1"> First </a> |
+            {% if ideas.has_prev %}<a href="#" class="page {{ ideas.prev_num }}">&lt;&lt; Previous </a>
+            {% else %}&lt;&lt; Previous {% endif %} | 
+            {% if ideas.has_next %}<a href="#" class="page {{ ideas.next_num }}">Next &gt;&gt;</a>
+            {% else %}Next &gt;&gt;{% endif %} |
+            {% if ideas.pages > 1 %}<a href="#" class="page {{ ideas.pages }}"> Last </a>
+            {% else %} Last {% endif %}
+          </div>
+        </div>
+        <input id="page" type="hidden" name="page" value="1">
+      </div>
+    </div>
+  </form>
+
+  <script src="/static/js/handleVote.js"></script>
+  <script src="/static/js/handleIdea.js"></script>
+  <script src="/static/js/handleSearch.js"></script>
+  
+{% endblock %}
