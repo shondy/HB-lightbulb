@@ -197,6 +197,8 @@ def create_idea():
 
     if request.method == 'POST':
         """Create a new idea."""
+        if not session.get("user_id"):
+            abort(400, "User did not login to the application.")
 
         user = User.get_by_id(session["user_id"])
         title = request.json.get("title")
@@ -209,7 +211,7 @@ def create_idea():
             db.session.commit()
             return jsonify({ 
                 "success": True,
-                "idea_id": idea.idea_id
+                "added": idea.idea_id
                 })
 
         except exc.SQLAlchemyError as err:
@@ -225,8 +227,13 @@ def create_idea():
 def edit_idea(idea_id):
     """Handle changing of an idea """
 
+    idea = Idea.get_by_id(idea_id)
+
     if request.method == 'PUT':
         """Update an idea."""
+
+        if not session.get("user_id") or idea.user_id != session["user_id"]:
+            abort(400, "User did not login to the application.")
 
         title = request.json.get("title")
         description = request.json.get("description")
@@ -238,7 +245,7 @@ def edit_idea(idea_id):
             db.session.commit()
             return jsonify({ 
                 "success": True,
-                "idea_id": idea_id
+                "updated": idea_id
                 })
 
         except exc.SQLAlchemyError as err:
@@ -247,8 +254,6 @@ def edit_idea(idea_id):
 
     else:
         """Show template for editing an idea."""
-
-        idea = Idea.get_by_id(idea_id)
 
         return render_template("idea_details.html", idea=idea, method="PUT")
 
@@ -275,6 +280,9 @@ def show_user(user_id):
 def edit_user_details(user_id):
     """Update user details: username, description."""
 
+    if not session.get("user_id") or int(user_id) != session["user_id"]:
+        abort(400, "User did not login to the application.")
+
     username = request.json.get("username")
     description = request.json.get("description")
     try:
@@ -296,6 +304,9 @@ def edit_user_details(user_id):
 @app.route("/users/<user_id>/password", methods=['PUT'])
 def edit_user_password(user_id):
     """Update user password."""
+
+    if not session.get("user_id") or int(user_id) != session["user_id"]:
+        abort(400, "User did not login to the application.")
 
     password = request.json.get("password")
     confirm_password = request.json.get("confirmPassword")
@@ -370,6 +381,8 @@ def create_comment(idea_id):
 
     if request.method == 'POST':
         """Create a new comment."""
+        if not session.get("user_id"):
+            abort(400, "User did not login to the application.")
 
         user = User.get_by_id(session["user_id"])
         idea = Idea.get_by_id(idea_id)
@@ -399,8 +412,13 @@ def create_comment(idea_id):
 def edit_comment(idea_id, comment_id):
     """handle changing a comment."""
 
+    comment = Comment.get_by_id(comment_id)
+
     if request.method == 'PUT':
         """Update a comment."""
+
+        if not session.get("user_id") or comment.user_id != session["user_id"]:
+            abort(400, "User did not login to the application.")
 
         description = request.json.get("description")
         Comment.update(comment_id, description)
@@ -418,7 +436,8 @@ def edit_comment(idea_id, comment_id):
     elif request.method == 'DELETE':
         """Delete a comment."""
 
-        comment = Comment.get_by_id(comment_id)
+        if not session.get("user_id") or comment.user_id != session["user_id"]:
+            abort(400, "User did not login to the application.")
 
         try:
             db.session.delete(comment)
@@ -435,7 +454,6 @@ def edit_comment(idea_id, comment_id):
         """Show template for editing a comment."""
 
         idea = Idea.get_by_id(idea_id)
-        comment = Comment.get_by_id(comment_id)
 
         return render_template("comment_details.html", idea=idea, comment=comment, method="PUT")
 
@@ -446,6 +464,8 @@ def create_vote():
 
     idea_id = request.json.get("idea_id")
     idea = Idea.get_by_id(idea_id)
+    if not session.get("user_id"):
+        abort(400, "User did not login to the application.")
 
     user_id = session["user_id"]
     user = User.get_by_id(user_id)
@@ -468,8 +488,10 @@ def delete_vote():
     """delete a vote."""
 
     idea_id = request.json.get("idea_id")
+    if not session.get("user_id"):
+        abort(400, "User did not login to the application.")
+
     user_id = session["user_id"]
-    
     
     vote = Vote.get_by_user_id_and_idea_id(user_id, idea_id)
     vote_id = vote.vote_id
