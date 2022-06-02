@@ -19,7 +19,7 @@ formLogin.addEventListener('submit', (evt) => {
   .then((response) => response.json())
   .then((responseJson) => {
     if (responseJson.success) {
-      window.open(`/`, '_self');
+      window.open(`/all-ideas`, '_self');
     }
     else if (responseJson.error === 400) {
       alert(responseJson.message);

@@ -6,7 +6,7 @@ const showWindowForComment = url => {
             menubar=no,
             scrollbars=yes,
             resizable=yes,
-            width=800,
+            width=700,
             height=500`);
 };
 
@@ -14,7 +14,7 @@ const addCommentButton = document.querySelector('.add-comment');
 
 addCommentButton.addEventListener('click', (evt) => {
 // check first if user loged in and open a window with comment form
-  if (evt.target.parentElement.classList.contains('active')) {
+  if (evt.target.parentElement.classList.contains('available')) {
     const idea_id = location.pathname.split('/')[2];
     const url = `/comments/${idea_id}`;
     showWindowForComment(url);

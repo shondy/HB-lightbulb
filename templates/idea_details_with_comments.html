@@ -7,14 +7,14 @@
 
     <div class="row">
       <div class="col-12">
-        <h1>{{ idea.title }}</h1>
+        <h2>{{ idea.title }}</h2>
       </div>
     </div>
 
     <div class="row">
       <div class="col-12">
         Created by: 
-        <a href="/users/{{ idea.user_id }}/ideas">
+        <a href="/users/{{ idea.user_id }}/ideas" class="user-link">
           {{ idea.user.username }}
         </a>
       </div>
@@ -22,7 +22,7 @@
 
     <div class="row">
       <div class="col-12">
-        <a href="{{ idea.link }}">
+        <a href="{{ idea.link }}" class="url">
           {{ idea.link }}
         </a>
         <p>
@@ -35,10 +35,10 @@
       <div class="col-12">
         {% if session.get('user_id') %}
           {% if session['user_id'] == idea.user_id %}
-            <a href="#" class="active edit-idea" id="{{ idea.idea_id }}"><i class="fas fa-pen-square" style="font-size:24px; color: gray"></i></a>
+            <a href="#" class="available edit-idea" id="{{ idea.idea_id }}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
           {% endif %}
 
-          <a href="#" class="active add-comment"><i class="fas fa-comment-alt" style="font-size:24px; color: gray"></i></a>
+          <a href="#" class="available add-comment"><i class="fas fa-comment-alt" style="font-size:24px; color: #007bff"></i></a>
           {% if idea_votes.user_vote == 1 %}                
             <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: green"></i></a>
           {% else %}
@@ -56,32 +56,28 @@
 
     <div class="row">
       <div class="col-12">
-        <h2>Comments</h2>
+        <h3>Comments</h3>
       </div>
     </div>
+    {% for comment in comments %}
     <div class="row">
       <div class="col-12">
-        <ul>
-          {% for comment in comments %}
-            <li>
-              <p>
-                <a href="/users/{{ comment.user_id }}/ideas">
-                  {{ comment.user.username }}
-                </a>
-                <i>last modified: {{ comment.modified.strftime('%Y-%m-%d') }}</i>
-                {% if session.get('user_id') and comment.user_id == session['user_id'] %}
-                  <a href="#" class="active edit-comment" id="{{ comment.comment_id}}"><i class="fas fa-pen-square" style="font-size:24px; color: gray"></i></a>
-                  <a href="#" class="active delete-comment" id="{{ comment.comment_id}}"><i class="fas fa-trash-alt" style="font-size:24px; color: gray"></i></a>
-                {% endif %}
-              </p>
-              <p style="white-space: pre-line">{{ comment.description }}</p>
-              
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
+        <p>
+          <a href="/users/{{ comment.user_id }}/ideas" class="user-link">
+            {{ comment.user.username }}
+          </a>
+        <br>
+          last modified: {{ comment.modified.strftime('%Y-%m-%d') }}
+        <br>
+          {% if session.get('user_id') and comment.user_id == session['user_id'] %}
+            <a href="#" class="active edit-comment" id="{{ comment.comment_id}}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
+            <a href="#" class="active delete-comment" id="{{ comment.comment_id}}"><i class="fas fa-trash-alt" style="font-size:24px; color: #007bff"></i></a>
+          {% endif %}
+        </p>
+        <p style="white-space: pre-line">{{ comment.description }}</p>
       </div>
     </div>
+    {% endfor %}
 
   </div>
 

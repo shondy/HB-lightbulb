@@ -4,30 +4,49 @@
 {% block body %}
   <div class="container-fluid">
 
-    <div class="row">
-      <div class="col-12">
-        <h1>From idea to project proposal</h1>
+    <div class="row mt-md-5 ms-md-1 ms-lg-3">
+
+      <div class="col-sm-12 col-md-5 col-lg-7 order-md-2 mb-5">
+        <img src="/static/img/lightbulb.jpg" class="img-fluid">
       </div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-6">
+
+      <div class="col-sm-12 col-md-7 col-lg-5 order-md-1 d-md-flex flex-column justify-content-center">
+        <h2>From idea to project proposal</h2>
         <p>
           Lightbulb is a free, easy-to-use web app where you can find ideas for your future project, 
           see which project could be the most demanding one, 
           add your ideas and get feedback from the community, share yout thoughts about ideas of others.
         </p>
-        <div>
+        <div class="d-grid gap-2 d-md-block">
           <a class="btn btn-primary" href="/all-ideas" role="button">Look through ideas</a>
           {% if not session.get('user_id') %}
             <a class="btn btn-primary" href="/users" role="button">Join your community</a>
           {% endif %}
         </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-3">
-        <img src="/static/img/lightbulb.jpg">
-      </div>
+      </div>    
     </div>
-
   </div>
 
 {% endblock %}
+<!-- <div class="row ms-md-1 ms-lg-3">
+
+  <div class="col-sm-12 col-md-6 col-lg-7 order-md-2">
+    <img src="/static/img/lightbulb.jpg" class="img-fluid mb-n2">
+  </div>
+
+  <div class="col-sm-12 col-md-6 col-lg-5 order-md-1 d-md-flex flex-column justify-content-center align-items-center">
+    <h1>From idea to project proposal</h1>
+    <p>
+      Lightbulb is a free, easy-to-use web app where you can find ideas for your future project, 
+      see which project could be the most demanding one, 
+      add your ideas and get feedback from the community, share yout thoughts about ideas of others.
+    </p>
+    <div class="d-grid gap-2 d-md-block">
+      <a class="btn btn-primary" href="/all-ideas" role="button">Look through ideas</a>
+      {% if not session.get('user_id') %}
+        <a class="btn btn-primary" href="/users" role="button">Join your community</a>
+      {% endif %}
+    </div>
+  </div>    
+</div>
+</div> -->

@@ -6,8 +6,8 @@ const showWindowForIdea = url => {
       menubar=no,
       scrollbars=yes,
       resizable=yes,
-      width=800,
-      height=500`);
+      width=700,
+      height=700`);
 };
 
 if (document.querySelector('.add-idea')) {
@@ -15,7 +15,7 @@ if (document.querySelector('.add-idea')) {
 
   addIdeaButton.addEventListener('click', (evt) => {
   // check first if user loged in and open a window with comment form
-    if (evt.target.classList.contains('active')) {
+    if (evt.target.classList.contains('available')) {
       const url = `/ideas`;
       showWindowForIdea(url);
     }

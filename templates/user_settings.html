@@ -5,8 +5,8 @@
 {% block body %}
 
 
-<h2>Edit your account settings</h2>
-<form id="user-details" class="requires-validation" novalidate>
+<form id="user-details" class="requires-validation form-create" novalidate>
+  <h2>Edit your account settings</h2>
   <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
   <div class="form-group">
       <label for="username">Username</label>
@@ -26,8 +26,8 @@
 </form>
 
 {% if not user.google_sign_only %}
-  <h2>Update your password</h2>
-  <form id="user-password" class="requires-validation" novalidate>
+  <form id="user-password" class="requires-validation form-create" novalidate>
+    <h2>Update your password</h2>
     <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
     <div class="form-group">
       <label for="password">New Password</label>

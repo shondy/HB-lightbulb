@@ -24,6 +24,9 @@ formJoin.addEventListener('submit', (evt) => {
   })
   .then((response) => response.json())
   .then((responseJson) => {
+    // to get error custom message have to wait until the body of the http response comes in .json()
+    // Because you receive the response as soon as all headers have arrived. 
+    // Calling .json() gets you another promise for the body of the http response that is yet to be loaded.
     if (responseJson.success) {
       alert("Thanks for registering! Please check your email to confirm your email address.")
       window.open(`/`, '_self');
@@ -33,3 +36,5 @@ formJoin.addEventListener('submit', (evt) => {
     }
   });
 });
+
+

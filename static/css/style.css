@@ -1,0 +1,61 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight:  700;
+  }
+
+
+
+.scroll {
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.url {
+    word-wrap: break-word;
+}
+
+.idea-link {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.idea-link:hover {
+    text-decoration: underline;
+  }
+ 
+  
+.idea-link:visited {
+    font-weight: normal;
+}
+
+.user-link {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.user-link:hover {
+    text-decoration: underline;
+}
+
+.form-create {
+    margin: 15pt;
+}
+
+.button-margin {
+    margin-top: 15pt;
+}
+
+
+@media screen and (min-width: 768px) {
+    .full-hight {
+        height: 100vh;
+    }
+}
+
+
+
