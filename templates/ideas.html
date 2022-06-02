@@ -2,11 +2,11 @@
 {% block title %}Ideas{% endblock %}
 
 {% block body %}
-  <form id="filter" action="{{ action }}">
+  <form id="filter" action="{{ action }}" class="mt-2 ms-lg-6 me-lg-48">
     <div class="container-fluid">
       <div class="row">
         {% if user is defined and not (session.get('user_id') and session["user_id"]==user.user_id) %}
-        <div class="col-12 col-md-3 mh-100 bg-light full-hight">
+        <div class="col-12 col-md-3 mh-100 full-hight">
           <!-- h-100 bg-light d-flex justify-content-center -->
           <div>
             <p><b>{{ user.username }}</b></p>
@@ -58,14 +58,13 @@
           </div>
         </div>
   
-        <div class="row">
-          <div class="col-12 scroll">
-            <table class="table table-striped">
+        <div class="row div-scroll mt-2">
+          <div class="col-12 inner-div-scroll">
+            <table class="table">
               <thead>
                 <tr>
                   <th scope="col">Ideas</th>
                   <th scope="col">Votes</th>
-                  <th scope="col">Modified</th>
                 </tr>
               </thead>
               <tbody>
@@ -86,9 +85,6 @@
                     {% endif %}
                     <span class='total-votes {{idea[0].idea_id}}'>{{ idea.total_votes }}</span> votes 
                   </td>
-                  <td>
-                    {{ idea[0].modified.strftime('%Y-%m-%d') }} 
-                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -96,7 +92,7 @@
           </div>
         </div>
       
-        <div class="row">
+        <div class="row mt-4">
           <div class="col-12">
             Ideas per page:
               <select name="perpage" id="perpage">

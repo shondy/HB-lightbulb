@@ -5,43 +5,43 @@
 {% block body %}
 
 
-<form id="user-details" class="requires-validation form-create" novalidate>
+<form id="user-details" class="requires-validation mt-lg-2 ms-lg-6 me-lg-48" novalidate>
   <h2>Edit your account settings</h2>
   <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
-  <div class="form-group">
+  <div class="form-group mt-lg-2">
       <label for="username">Username</label>
       <input class="form-control" id="username" value="{{ user.username }}" pattern=".*[^\s]+.*" required="required">
       <div class="invalid-feedback">Username cannot be blank.</div>
   </div>
-  <div class="form-group">
+  <div class="form-group mt-lg-2">
     <label for="description">Little bit about you</label>
     <textarea class="form-control" id="description" name="description" rows="10">{{ user.description if user.description else ''}} 
     </textarea>
   </div>
-  <div class="form-group">
+  <div class="form-group mt-lg-2">
     <label for="email">Email</label>
     <input class="form-control" id="email" value="{{ user.email }}" readonly>
   </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary button-margin">Submit</button>
 </form>
 
 {% if not user.google_sign_only %}
-  <form id="user-password" class="requires-validation form-create" novalidate>
+  <form id="user-password" class="requires-validation mt-lg-2 ms-lg-6 me-lg-48" novalidate>
     <h2>Update your password</h2>
     <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
-    <div class="form-group">
+    <div class="form-group mt-lg-2">
       <label for="password">New Password</label>
       <!-- ?= in regex is a positive lookahead, a type of zero-width assertion. 
       What it's saying is that the captured match must be followed by whatever is within the parentheses but that part isn't captured.  -->
       <input type="password" class="form-control" id="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$" required="required">
       <div class="invalid-feedback">Password should contain at least 8 symbols, one lowercase and one uppercase, a number and one special symbol !@#$%^&*_=+-</div>
     </div>
-    <div class="form-group">
+    <div class="form-group mt-lg-2">
       <label for="confirm-password">Please confirm your current password</label>
       <input type="password" class="form-control" id="confirm-password" required="required">
       <div class="invalid-feedback">Password cannot be blank.</div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary button-margin">Submit</button>
   </form>
 {% endif %}
 

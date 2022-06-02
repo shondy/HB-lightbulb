@@ -4,81 +4,89 @@
 
 {% block body %}
   <div class="container-fluid">
-
-    <div class="row">
-      <div class="col-12">
-        <h2>{{ idea.title }}</h2>
+    <div class="ms-lg-6 me-lg-48">
+      <div class="row mt-2">
+        <div class="col-12">
+          <h2>{{ idea.title }}</h2>
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-12">
-        Created by: 
-        <a href="/users/{{ idea.user_id }}/ideas" class="user-link">
-          {{ idea.user.username }}
-        </a>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <a href="{{ idea.link }}" class="url">
-          {{ idea.link }}
-        </a>
-        <p>
-          {{ idea.description }}
-        </p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        {% if session.get('user_id') %}
-          {% if session['user_id'] == idea.user_id %}
-            <a href="#" class="available edit-idea" id="{{ idea.idea_id }}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
-          {% endif %}
-
-          <a href="#" class="available add-comment"><i class="fas fa-comment-alt" style="font-size:24px; color: #007bff"></i></a>
-          {% if idea_votes.user_vote == 1 %}                
-            <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: green"></i></a>
-          {% else %}
-            <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: lightgray"></i></a>
-          {% endif %}
-          
-        {% else %}
-          <a href="#" class="add-comment"><i class="fas fa-comment-alt" style="font-size:24px; color: lightgray"></i></a>
-        {% endif %}
-        <p>
-          <span class='total-votes {{idea.idea_id}}'>{{ idea_votes.total_votes }}</span> votes
-        </p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <h3>Comments</h3>
-      </div>
-    </div>
-    {% for comment in comments %}
-    <div class="row">
-      <div class="col-12">
-        <p>
-          <a href="/users/{{ comment.user_id }}/ideas" class="user-link">
-            {{ comment.user.username }}
+      <div class="row">
+        <div class="col-12">
+          Created by: 
+          <a href="/users/{{ idea.user_id }}/ideas" class="user-link">
+            {{ idea.user.username }}
           </a>
-        <br>
-          last modified: {{ comment.modified.strftime('%Y-%m-%d') }}
-        <br>
-          {% if session.get('user_id') and comment.user_id == session['user_id'] %}
-            <a href="#" class="active edit-comment" id="{{ comment.comment_id}}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
-            <a href="#" class="active delete-comment" id="{{ comment.comment_id}}"><i class="fas fa-trash-alt" style="font-size:24px; color: #007bff"></i></a>
-          {% endif %}
-        </p>
-        <p style="white-space: pre-line">{{ comment.description }}</p>
+        </div>
       </div>
-    </div>
-    {% endfor %}
 
+      <div class="row">
+        <div class="col-12">
+          <small class="text-muted">Last modified: {{ idea.modified.strftime('%Y-%m-%d') }}</small>
+          
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <a href="{{ idea.link }}" class="url">
+            {{ idea.title }}
+          </a>
+          <p>
+            {{ idea.description }}
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          {% if session.get('user_id') %}
+            {% if session['user_id'] == idea.user_id %}
+              <a href="#" class="available edit-idea me-3" id="{{ idea.idea_id }}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
+            {% endif %}
+
+            <a href="#" class="available add-comment me-3"><i class="fas fa-comment-alt" style="font-size:24px; color: #007bff"></i></a>
+            {% if idea_votes.user_vote == 1 %}                
+              <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: green"></i></a>
+            {% else %}
+              <a href="#" class='vote {{idea.idea_id}}'><i class="fas fa-check-circle" style="font-size:24px; color: lightgray"></i></a>
+            {% endif %}
+            
+          {% else %}
+            <a href="#" class="add-comment"><i class="fas fa-comment-alt" style="font-size:24px; color: lightgray"></i></a>
+          {% endif %}
+          <p>
+            <span class='total-votes {{idea.idea_id}}'>{{ idea_votes.total_votes }}</span> votes
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <h3>Comments</h3>
+        </div>
+      </div>
+      {% for comment in comments %}
+      <div class="row">
+        <div class="col-12">
+          <p>
+            <a href="/users/{{ comment.user_id }}/ideas" class="user-link">
+              {{ comment.user.username }}
+            </a>
+          <br>
+          <small class="text-muted">last modified: {{ comment.modified.strftime('%Y-%m-%d') }}</small>
+          <br>
+            {% if session.get('user_id') and comment.user_id == session['user_id'] %}
+              <a href="#" class="active edit-comment mr-3" id="{{ comment.comment_id}}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
+              <a href="#" class="active delete-comment" id="{{ comment.comment_id}}"><i class="fas fa-trash-alt" style="font-size:24px; color: #007bff"></i></a>
+            {% endif %}
+          </p>
+          <p style="white-space: pre-line">{{ comment.description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
   </div>
 
   <script src="/static/js/handleIdea.js"></script>

@@ -1,7 +1,7 @@
 """Models for movie ratings app."""
 
 from datetime import datetime
-from flask import render_template
+from flask import render_template, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 import bcrypt
