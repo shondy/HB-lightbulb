@@ -1,6 +1,7 @@
 # Lightbulb
 
-Lightbulb is a collaboration application for sharing and discussing project ideas. With lightbulb users can create project ideas, add comments and votes to project ideas, receive notifications about added comments to their ideas, search for certain ideas.
+Lightbulb is a collaboration application for sharing and discussing project ideas. With Lightbulb users can look through project ideas and comments to them, search and sort project ideas. Authorized users can also create project ideas, add comments and vote for project ideas, receive email notifications about added comments to their ideas.
+
 
 ## Deployment
 https://ridethrift.herokuapp.com/

@@ -3,24 +3,24 @@
 {% block title %}Idea{% endblock %}
 
 {% block body %}
-  <form id="idea-details" class="requires-validation mt-2 ms-4 me-4 ms-lg-6 me-lg-48" novalidate>
+  <form id="idea-details" class="requires-validation mt-3 ms-4 me-4 ms-lg-6 me-lg-60" novalidate>
     <h2>{{ 'Edit' if idea is defined else 'Add' }} your idea</h2>
     <input id="method" type="hidden" name="method" value="{{ method }}">
     <input id="idea_id" type="hidden" name="idea_id" value="{{ idea.idea_id if idea is defined else '' }}">
-    <div class="form-group mt-2">
+    <div class="form-group mt-3">
         <label for="title">Title</label>
         <input type="text" class="form-control" id="title" value="{{ idea.title if idea is defined else ''}}" pattern=".*[^\s]+.*" required="required">
         <div class="invalid-feedback">Title field cannot be blank.</div>
     </div>
     <br>
-    <div class="form-group mt-2">
+    <div class="form-group mt-3">
         <label for="description">Description</label>
         <textarea class="form-control" id="description" name="description" rows="10" required>{{ idea.description if idea is defined else '' }} 
         </textarea>
         <div class="invalid-feedback">Description field cannot be blank.</div>
     </div>
     <br>
-    <div class="form-group mt-2">
+    <div class="form-group mt-3">
         <label for="link">Github link</label>
         <input type="url" class="form-control" id="link" value="{{ idea.link if idea is defined else ''}}" placeholder="https://example.com">
         <div class="invalid-feedback">Wrong format of the Github link</div>

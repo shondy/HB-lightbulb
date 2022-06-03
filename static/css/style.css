@@ -51,16 +51,37 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .inner-div-scroll {
-    max-height: 70vh;
+    max-height: 72vh;
     overflow-y: auto;
 }
 
 @media (min-width: 1200px) {
     .ms-lg-6 {
-        margin-left: 5rem !important;
+        margin-left: 6rem !important;
+    }
+    .me-lg-6 {
+        margin-left: 6rem !important;
     }
 
-    .me-lg-48 {
+    .ms-lg-10 {
+        margin-left: 10rem !important;
+    }
+    .me-lg-10 {
+        margin-right: 10rem !important;
+    }
+
+    .mt-lg-10 {
+        margin-top: 10rem !important;
+    }
+
+    .ms-lg-20 {
+        margin-left: 20rem !important;
+    }
+    .me-lg-20 {
+        margin-right: 20rem !important;
+    }
+
+    .me-lg-60 {
         margin-right: 60rem !important;
     }
 }
@@ -69,6 +90,18 @@ h1, h2, h3, h4, h5, h6 {
     .full-hight {
         height: 90vh;
     }
+}
+
+.lego-img-settings {
+    width: 80px;
+    height: 80px;
+    margin: 5px 5px 0 0;
+}
+
+.lego-img {
+    width: 20px;
+    height: 20px;
+    margin: 2px 2px 0 0;
 }
 
 

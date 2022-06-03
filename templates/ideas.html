@@ -2,7 +2,7 @@
 {% block title %}Ideas{% endblock %}
 
 {% block body %}
-  <form id="filter" action="{{ action }}" class="mt-2 ms-lg-6 me-lg-48">
+  <form id="filter" action="{{ action }}" class="mt-2 ms-lg-6 me-lg-60">
     <div class="container-fluid">
       <div class="row">
         {% if user is defined and not (session.get('user_id') and session["user_id"]==user.user_id) %}
@@ -65,6 +65,7 @@
                 <tr>
                   <th scope="col">Ideas</th>
                   <th scope="col">Votes</th>
+                  <th scope="col" class="d-none d-sm-table-cell">Modified</th>
                 </tr>
               </thead>
               <tbody>
@@ -85,6 +86,9 @@
                     {% endif %}
                     <span class='total-votes {{idea[0].idea_id}}'>{{ idea.total_votes }}</span> votes 
                   </td>
+                  <td class="d-none d-sm-table-cell">
+                    {{ idea[0].modified.strftime('%Y-%m-%d') }}
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -92,7 +96,7 @@
           </div>
         </div>
       
-        <div class="row mt-4">
+        <div class="row mt-3">
           <div class="col-12">
             Ideas per page:
               <select name="perpage" id="perpage">

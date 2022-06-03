@@ -4,7 +4,7 @@
 
 {% block body %}
   <div class="container-fluid">
-    <div class="ms-lg-6 me-lg-48">
+    <div class="ms-lg-6 me-lg-60">
       <div class="row mt-2">
         <div class="col-12">
           <h2>{{ idea.title }}</h2>
@@ -14,6 +14,7 @@
       <div class="row">
         <div class="col-12">
           Created by: 
+          <img src="/static/img/lego{{ idea.user_id % 9}}.jpg" class="img-fluid lego-img">
           <a href="/users/{{ idea.user_id }}/ideas" class="user-link">
             {{ idea.user.username }}
           </a>
@@ -70,6 +71,7 @@
       <div class="row">
         <div class="col-12">
           <p>
+            <img src="/static/img/lego{{ comment.user_id % 9}}.jpg" class="img-fluid lego-img">
             <a href="/users/{{ comment.user_id }}/ideas" class="user-link">
               {{ comment.user.username }}
             </a>

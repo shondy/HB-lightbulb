@@ -54,7 +54,7 @@ def process_google_auth():
         else:
             flash("Cannot sign in with Google. Try again.")
         
-        return redirect("/")
+        return redirect("/all-ideas")
 
 @app.route("/login", methods=['GET', 'POST'])
 def process_login():

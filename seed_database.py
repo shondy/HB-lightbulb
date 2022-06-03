@@ -3,7 +3,7 @@
 import os
 import json
 from random import choice, sample
-from datetime import datetime
+from datetime import datetime, timedelta
 # import sys
 
 import model
@@ -18,16 +18,17 @@ model.connect_to_db(server.app)
 model.db.create_all()
 # model.search.create_index()
 
-# Create 10 users
+# Create 5 users
 users_in_db = []
-for n in range(10):
+for n in range(6):
     username = f"test{n}"
     email = f"user{n}@test.com"
     description = f"I'm a test user {n}. Happy to be useful."
     password = f"test{n}A!!"
     description = f"I'm test user{n}. Happy to help."
+    created = datetime.today() - timedelta(days=n)
 
-    db_user = model.User(username=username, email=email, password=password, description=description, email_confirmed=True)
+    db_user = model.User(username=username, email=email, password=password, description=description, email_confirmed=True, created=created)
     users_in_db.append(db_user)
 
 model.db.session.add_all(users_in_db)
@@ -56,13 +57,13 @@ for idea in idea_data:
 
 model.db.session.add_all(ideas_in_db)
 
-# each of 10 created users will make 3 votes and 3 comments
+# each of 6 created users will make 5 votes and 5 comments
 for user in users_in_db:
-    random_ideas = sample(ideas_in_db, 3)
+    random_ideas = sample(ideas_in_db, 5)
     votes = [model.Vote(user=user, idea=idea) for idea in random_ideas]
     model.db.session.add_all(votes)
 
-    for _ in range(3):
+    for _ in range(5):
         random_idea = choice(ideas_in_db)
         random_comment = choice(["cool idea", "great idea", "not usefull", "would like to have this app", "would like to implement", "please explain in detail"])
 
