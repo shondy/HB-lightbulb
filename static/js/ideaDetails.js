@@ -10,12 +10,14 @@ formIdeaDetails.addEventListener('submit', (evt) => {
   const title = document.querySelector('#title').value;
   const description = document.querySelector('#description').value;
   const link = document.querySelector('#link').value;
+  const image = document.querySelector('#image').value;
+
 
   let idea_id;
   if (method === 'PUT') {
     idea_id = document.querySelector('#idea_id').value;
   }
   
-  window.opener.handleIdea(method, title, description, link, idea_id);
+  window.opener.handleIdea(method, title, description, link, image, idea_id);
   window.close();
 });

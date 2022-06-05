@@ -12,6 +12,12 @@
       </div>
 
       <div class="row">
+        <div class="col-12"> 
+          <img src="{{ idea.image }}" class="img-fluid idea-img">
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col-12">
           Created by: 
           <img src="/static/img/lego{{ idea.user_id % 9}}.jpg" class="img-fluid lego-img">
@@ -79,7 +85,7 @@
           <small class="text-muted">last modified: {{ comment.modified.strftime('%Y-%m-%d') }}</small>
           <br>
             {% if session.get('user_id') and comment.user_id == session['user_id'] %}
-              <a href="#" class="active edit-comment mr-3" id="{{ comment.comment_id}}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
+              <a href="#" class="active edit-comment me-3" id="{{ comment.comment_id}}"><i class="fas fa-pen-square" style="font-size:24px; color: #007bff"></i></a>
               <a href="#" class="active delete-comment" id="{{ comment.comment_id}}"><i class="fas fa-trash-alt" style="font-size:24px; color: #007bff"></i></a>
             {% endif %}
           </p>

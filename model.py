@@ -180,7 +180,8 @@ class Idea(db.Model):
     idea_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    link = db.Column(db.String(200))
+    image = db.Column(db.String(2100))
+    link = db.Column(db.String(2100))
     modified = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
 
@@ -191,7 +192,7 @@ class Idea(db.Model):
         return f"<Idea idea_id={self.idea_id} title={self.title}>"
 
     @classmethod
-    def create(cls, user, title, description, link = None):
+    def create(cls, user, title, description, link, image):
         """Create and return a new idea."""
 
         modified = datetime.now()
@@ -201,16 +202,18 @@ class Idea(db.Model):
             title=title,
             description=description,
             link=link,
+            image=image,
             modified=modified
             )
         
     @classmethod
-    def update(cls, idea_id, new_title, new_description, new_link):
+    def update(cls, idea_id, new_title, new_description, new_link, new_image):
         """ Update a idea given idea_id and the updated title and description. """
         idea = cls.get_by_id(idea_id)
         idea.title = new_title
         idea.description = new_description
         idea.link = new_link
+        idea.image = new_image
         idea.modified = datetime.now()
 
     @classmethod

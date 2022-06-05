@@ -37,7 +37,7 @@ if (document.querySelector('.edit-idea')) {
   });
 }
 
-function handleIdea(method, title, description, link, idea_id) {
+function handleIdea(method, title, description, link, image, idea_id) {
   // create comment - method POST, update comment - method PUT
 
   let url = `/ideas`; 
@@ -47,6 +47,7 @@ function handleIdea(method, title, description, link, idea_id) {
     title: title,
     description: description,
     link: link,
+    image: image,
   };
 
   

@@ -8,7 +8,7 @@
 <form id="user-details" class="requires-validation mt-3 ms-3 me-3 ms-lg-6 me-lg-60" novalidate>
   <h2>Edit your account settings</h2>
   <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
-  <img src="/static/img/lego{{ user.user_id % 9}}.jpg" class="img-fluid lego-img">
+  <img src="/static/img/lego{{ user.user_id % 9}}.jpg" class="img-fluid lego-img-settings">
   <div class="form-group mt-3">
       <label for="username">Username</label>
       <input class="form-control" id="username" value="{{ user.username }}" pattern=".*[^\s]+.*" required="required">

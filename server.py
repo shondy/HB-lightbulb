@@ -204,8 +204,10 @@ def create_idea():
         title = request.json.get("title")
         description = request.json.get("description")
         link = request.json.get("link")
+        image = request.json.get("image")
         
-        idea = Idea.create(user, title, description, link)
+        idea = Idea.create(user, title, description, link, image)
+        print("idea==========================", idea)
         try:
             db.session.add(idea)
             db.session.commit()
@@ -238,8 +240,9 @@ def edit_idea(idea_id):
         title = request.json.get("title")
         description = request.json.get("description")
         link = request.json.get("link")
+        image = request.json.get("image")
 
-        Idea.update(idea_id, title, description, link)
+        Idea.update(idea_id, title, description, link, image)
   
         try:
             db.session.commit()

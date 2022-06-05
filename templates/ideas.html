@@ -9,7 +9,7 @@
         <div class="col-12 col-md-3 mh-100 full-hight">
           <!-- h-100 bg-light d-flex justify-content-center -->
           <div>
-            <p><b>{{ user.username }}</b></p>
+            <p><img src="/static/img/lego{{ user.user_id % 9}}.jpg" class="img-fluid lego-img"><b>{{ user.username }}</b></p>
             <p>User since: {{ user.created.strftime('%Y-%m-%d') }}</p>
             {% if user.description %}
               <p>{{ user.description }}</p>

@@ -23,7 +23,6 @@ requests have been set to sandbox mode.
 - HTML
 - CSS
 - Javascript
-- JQuery
 - AJAX
 - JSON
 - Bootstrap
@@ -31,7 +30,14 @@ requests have been set to sandbox mode.
 
 ## <a name="features"></a>Features
 
-Search for ideas by name. User account registration not required.
+Search for ideas by name and sorting of ideas by modification date, number votes or relevance. User account registration not required. <br />
+Flask-msearch library - a full text search extension of Flask - was used for search.
+
+![Ideas Search Logged out](/static/img/_readme-img/search.png)
+
+Look through ideas of certain user. User account registration not required.
+![Users Ideas Logged out](/static/img/_readme-img/users-ideas.png)
+
 
 Register or login to add/edit an idea, add/edit/delete comment, vote for ideas.
 

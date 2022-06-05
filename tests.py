@@ -194,7 +194,8 @@ class FlaskTestsLoggedIn(TestCase):
                                   headers={'Content-Type': 'application/json'},
                                   json={"title": "Lightbulb",
                                   "description": "A collaboration application for sharing and discussing project ideas",
-                                  "link": "https://github.com/shondy/HB-lightbulb",}
+                                  "link": "https://github.com/shondy/HB-lightbulb",
+                                  "image": "/static/img/idea1.png",}
                                   )
         data = json.loads(result.data)
         self.assertEqual(data['success'], True)
@@ -205,6 +206,7 @@ class FlaskTestsLoggedIn(TestCase):
         self.assertEqual(idea.title, "Lightbulb")
         self.assertEqual(idea.description, "A collaboration application for sharing and discussing project ideas")
         self.assertEqual(idea.link, "https://github.com/shondy/HB-lightbulb")
+        self.assertEqual(idea.image, "/static/img/idea1.png")
 
     def test_update_idea(self):
         """Test updating an idea."""
@@ -214,7 +216,8 @@ class FlaskTestsLoggedIn(TestCase):
                                   headers={'Content-Type': 'application/json'},
                                   json={"title": "Test",
                                   "description": "Test",
-                                  "link": "https://github.com/test/test",}
+                                  "link": "https://github.com/test/test",
+                                  "image": "/static/img/idea3.png",}
                                   )
         data = json.loads(result.data)
         self.assertEqual(data['success'], True)
@@ -225,6 +228,7 @@ class FlaskTestsLoggedIn(TestCase):
         self.assertEqual(idea.title, "Test")
         self.assertEqual(idea.description, "Test")
         self.assertEqual(idea.link, "https://github.com/test/test")
+        self.assertEqual(idea.image, "/static/img/idea3.png")
 
     def test_create_comment(self):
         """Test creating a comment."""
