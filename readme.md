@@ -36,10 +36,17 @@ Flask-msearch library - a full text search extension of Flask - was used for sea
 ![Ideas Search Logged out](/static/img/_readme-img/search.png)
 
 Look through ideas of certain user. User account registration not required.
+
 ![Users Ideas Logged out](/static/img/_readme-img/users-ideas.png)
 
+Create an account or sign in with Google account to be able to add/edit an idea, add/edit/delete comment, vote for ideas.
 
-Register or login to add/edit an idea, add/edit/delete comment, vote for ideas.
+![Create account Logged out](/static/img/_readme-img/create-account.png)
+
+For activating an account user will be sent an email with a unique confirmation link. A link is generted using URLSafeSerializer from ItsDangerous.
+
+![Confirm account Logged out](/static/img/_readme-img/confirm-account.mp4)
+
 
 Email for confirming user email address.
 
