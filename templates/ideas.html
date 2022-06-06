@@ -2,7 +2,7 @@
 {% block title %}Ideas{% endblock %}
 
 {% block body %}
-  <form id="filter" action="{{ action }}" class="mt-2 ms-lg-6 me-lg-60">
+  <form id="filter" action="{{ action }}" class="mt-2 ms-lg-6 page-w">
     <div class="container-fluid">
       <div class="row">
         {% if user is defined and not (session.get('user_id') and session["user_id"]==user.user_id) %}

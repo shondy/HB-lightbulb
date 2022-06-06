@@ -5,7 +5,7 @@
 {% block body %}
 
 
-<form id="user-details" class="requires-validation mt-3 ms-3 me-3 ms-lg-6 me-lg-60" novalidate>
+<form id="user-details" class="requires-validation mt-3 ms-3 me-3 ms-lg-6 page-w" novalidate>
   <h2>Edit your account settings</h2>
   <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
   <img src="/static/img/lego{{ user.user_id % 9}}.jpg" class="img-fluid lego-img-settings">
@@ -27,7 +27,7 @@
 </form>
 
 {% if not user.google_sign_only %}
-  <form id="user-password" class="requires-validation mt-5 ms-sm-3 ms-lg-6 me-lg-60" novalidate>
+  <form id="user-password" class="requires-validation mt-5 ms-sm-3 ms-lg-6 page-w" novalidate>
     <h2>Update your password</h2>
     <input class="user_id" type="hidden" name="user_id" value="{{ user.user_id }}">
     <div class="form-group mt-3">

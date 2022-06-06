@@ -43,7 +43,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .button-margin {
-    margin-top: 15pt;
+    margin-top: 15px;
 }
 
 .div-scroll {
@@ -106,9 +106,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .idea-img {
     width: 600px;
-    margin: 10pt 100pt;
+    margin: 10px 60px;
 }
 
+.page-w {
+    width: 800px;
+}
 
 
 

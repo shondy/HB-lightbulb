@@ -347,7 +347,7 @@ def user_ideas(user_id):
 
     return render_template("ideas.html", 
     ideas=ideas_with_votes, 
-    title="Your ideas",
+    title="My ideas",
     user=user, 
     most_voted_idea=most_voted_idea, 
     search=search, 
@@ -370,7 +370,7 @@ def user_votes(user_id):
 
     return render_template("ideas.html", 
     ideas=ideas_with_votes, 
-    title="Ideas you voted for",
+    title="My votes",
     perpage=perpage, 
     search=search, 
     sort=sort,

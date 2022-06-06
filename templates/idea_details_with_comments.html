@@ -4,7 +4,7 @@
 
 {% block body %}
   <div class="container-fluid">
-    <div class="ms-lg-6 me-lg-60">
+    <div class="ms-lg-6 page-w">
       <div class="row mt-2">
         <div class="col-12">
           <h2>{{ idea.title }}</h2>
@@ -36,9 +36,11 @@
 
       <div class="row">
         <div class="col-12">
+          {% if idea.link %}
           <a href="{{ idea.link }}" class="url">
             {{ idea.title }}
           </a>
+          {% endif %}
           <p>
             {{ idea.description }}
           </p>

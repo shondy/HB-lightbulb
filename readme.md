@@ -33,7 +33,7 @@ requests have been set to sandbox mode.
 Search for ideas by name and sorting of ideas by modification date, number votes or relevance. User account registration not required. <br />
 Flask-msearch library - a full text search extension of Flask - was used for search.
 
-![Ideas Search Logged out](/static/img/_readme-img/search.png)
+![Ideas Search-sort Logged out](/static/img/_readme-img/search-sort.gif)
 
 Look through ideas of certain user. User account registration not required.
 
@@ -45,26 +45,31 @@ Create an account or sign in with Google account to be able to add/edit an idea,
 
 For activating an account user will be sent an email with a unique confirmation link. A link is generted using URLSafeSerializer from ItsDangerous.
 
-![Confirm account Logged out](/static/img/_readme-img/confirm-account.mp4)
+![Confirm email Logged out](/static/img/_readme-img/confirm-email.png)
 
+Log in to the created account or sign in with Google account
 
-Email for confirming user email address.
+![Login](/static/img/_readme-img/login.png)
 
-Add and edit idea.
+Add and edit ideas.
 
-Vote for an idea.
+![Add idea Logged in](/static/img/_readme-img/change-idea.gif)
 
-Add, edit, delete comment.
+Vote for ideas.
 
-Receive email notifications about added/edited comment to your ideas.
+![Voting Logged in](/static/img/_readme-img/voting.gif)
 
-Manage your account.
+Add, edit, delete comments.
 
-See ideas of certain user.
+![Change comment Logged in](/static/img/_readme-img/change-comment.gif)
 
-See your ideas.
+Receive email notifications about added/edited comment to user's ideas.
 
-See ideas you voted for.
+![Email notification](/static/img/_readme-img/email-notification.png)
+
+Manage user account: edit user settings, look through user ideas and ideas user voted for.  
+
+![Settings](/static/img/_readme-img/settings.gif)
 
 
 ## <a name="install"></a>Installation

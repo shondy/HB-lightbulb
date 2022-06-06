@@ -7,7 +7,7 @@ const showWindowForIdea = url => {
       scrollbars=yes,
       resizable=yes,
       width=700,
-      height=700`);
+      height=900`);
 };
 
 if (document.querySelector('.add-idea')) {
