@@ -22,4 +22,5 @@ SQLAlchemy==1.4.18
 urllib3==1.26.9
 URLObject==2.4.3
 Werkzeug==2.0.1
+Whoosh==2.7.4
 zipp==3.8.0
