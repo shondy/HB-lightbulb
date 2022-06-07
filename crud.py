@@ -71,7 +71,9 @@ def get_voted_by_user_ideas_with_votes_filtered(loged_user_id, search, sort, pag
                 func.count(Vote.vote_id).label("total_votes"),
                 func.count(case(
                 [((Vote.user_id == loged_user_id), 1)])).label("user_vote")
-                ).group_by(Idea.idea_id).filter(Vote.user_id==loged_user_id)
+                ).group_by(Idea.idea_id).filter(
+                    Idea.idea_id.in_(
+                        db.session.query(Vote.idea_id).filter(Vote.user_id==loged_user_id)))
 
     if sort == "latest":
         ideas_with_votes = ideas_with_votes.order_by(Idea.modified.desc())
