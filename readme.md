@@ -1,13 +1,9 @@
 # Lightbulb
 
-Lightbulb is a collaboration application for sharing and discussing project ideas. With Lightbulb users can look through project ideas and comments to them, search and sort project ideas. Authorized users can also create project ideas, add comments and vote for project ideas, receive email notifications about added comments to their ideas.
+**Lightbulb** is a collaboration application for sharing and discussing project ideas. With Lightbulb users can look through project ideas and comments to them, search and sort project ideas. Lightbulb has two types of  authorization: by creating an account and by signing in with a Google account. 
+Authorized users can create and update project ideas, create, update and delete comments, vote for project ideas.
+Also authorized users can change their settings, look through their ideas and votes, receive email notifications about added comments to their ideas.
 
-
-## Deployment
-https://ridethrift.herokuapp.com/
-
-*Please note the "request a ride" feature is for proof of concept only;
-requests have been set to sandbox mode.
 
 ## Contents
 * [Tech Stack](#technologies)
@@ -27,11 +23,12 @@ requests have been set to sandbox mode.
 - JSON
 - Bootstrap
 - Python unittest module
+- Google Sign-In API
 
 ## <a name="features"></a>Features
 
 Search for ideas by name and sorting of ideas by modification date, number votes or relevance. User account registration not required. <br />
-Flask-msearch library - a full text search extension of Flask - was used for search.
+To search for ideas I used msearch Flask extension to implement full-text search functionality.
 
 ![Ideas Search-sort Logged out](/static/img/_readme-img/search-sort.gif)
 
@@ -39,7 +36,7 @@ Look through ideas of certain user. User account registration not required.
 
 ![Users Ideas Logged out](/static/img/_readme-img/users-ideas.png)
 
-Create an account or sign in with Google account to be able to add/edit an idea, add/edit/delete comment, vote for ideas.
+Create an account or sign in with Google account to be able to create/update ideas, create/update/delete comments, vote for ideas.
 
 ![Create account Logged out](/static/img/_readme-img/create-account.png)
 
@@ -51,7 +48,7 @@ Log in to the created account or sign in with Google account
 
 ![Login](/static/img/_readme-img/login.png)
 
-Add and edit ideas.
+Create and update ideas.
 
 ![Add idea Logged in](/static/img/_readme-img/change-idea.gif)
 
@@ -59,11 +56,11 @@ Vote for ideas.
 
 ![Voting Logged in](/static/img/_readme-img/voting.gif)
 
-Add, edit, delete comments.
+Create, update and delete comments.
 
 ![Change comment Logged in](/static/img/_readme-img/change-comment.gif)
 
-Receive email notifications about added/edited comment to user's ideas.
+Receive email notifications about added/edited comments to user's ideas.
 
 ![Email notification](/static/img/_readme-img/email-notification.png)
 
@@ -144,7 +141,7 @@ Run the app:
 python3 server.py
 ```
 
-You can now navigate to 'localhost:5000/' to access Lightbulb.
+You can now navigate to 'localhost:5000/' to access Lightbulb app.
 
 ## <a name="aboutme"></a>About Me
 Lightbulb was created by Olga Tarasova. Learn more about the developer on [LinkedIn](https://www.linkedin.com/in/olga-tarasova-shondy).
