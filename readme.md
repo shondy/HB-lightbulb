@@ -147,5 +147,5 @@ python3 server.py
 You can now navigate to 'localhost:5000/' to access Lightbulb.
 
 ## <a name="aboutme"></a>About Me
-Lightbulb was created by Olga Tarasova. Learn more about the developer on [LinkedIn](https://www.linkedin.com/in/olga-tarasova-100987183).
+Lightbulb was created by Olga Tarasova. Learn more about the developer on [LinkedIn](https://www.linkedin.com/in/olga-tarasova-shondy).
 ```
