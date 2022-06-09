@@ -26,45 +26,49 @@ Also authorized users can change their settings, look through their ideas and vo
 - Google Sign-In API
 
 ## <a name="features"></a>Features
-
-Search for ideas by name and sorting of ideas by modification date, number votes or relevance. User account registration not required. <br />
+Look through all ideas, search for ideas by name and sorting of ideas by modification date, number votes or relevance. 
+User account registration is not required. <br />
 To search for ideas I used msearch Flask extension to implement full-text search functionality.
 
-![Ideas Search-sort Logged out](/static/img/_readme-img/search-sort.gif)
+![Search and sort ideas](/static/img/_readme-img/search-sort.gif)
 
-Look through ideas of certain user. User account registration not required.
+Look through idea details and commennts to an idea. User account registration is not required.
 
-![Users Ideas Logged out](/static/img/_readme-img/users-ideas.png)
+![Idea details and comments](/static/img/_readme-img/idea-details.png)
+
+Look through ideas of certain user. User account registration is not required.
+
+![User's ideas](/static/img/_readme-img/users-ideas.png)
 
 Create an account or sign in with Google account to be able to create/update ideas, create/update/delete comments, vote for ideas.
 
-![Create account Logged out](/static/img/_readme-img/create-account.png)
+![Create an account](/static/img/_readme-img/create-account.png)
 
 For activating an account user will be sent an email with a unique confirmation link. A link is generted using URLSafeSerializer from ItsDangerous.
 
-![Confirm email Logged out](/static/img/_readme-img/confirm-email.png)
+![Confirm an email](/static/img/_readme-img/confirm-email.png)
 
 Log in to the created account or sign in with Google account
 
 ![Login](/static/img/_readme-img/login.png)
 
-Create and update ideas.
+Create and update ideas (for authorized users).
 
-![Add idea Logged in](/static/img/_readme-img/change-idea.gif)
+![Add an idea](/static/img/_readme-img/change-idea.gif)
 
-Vote for ideas.
+Vote for ideas (for authorized users).
 
-![Voting Logged in](/static/img/_readme-img/voting.gif)
+![Voting](/static/img/_readme-img/voting.gif)
 
-Create, update and delete comments.
+Create, update and delete comments (for authorized users).
 
-![Change comment Logged in](/static/img/_readme-img/change-comment.gif)
+![Change a comment](/static/img/_readme-img/change-comment.gif)
 
 Receive email notifications about added/edited comments to user's ideas.
 
 ![Email notification](/static/img/_readme-img/email-notification.png)
 
-Manage user account: edit user settings, look through user ideas and ideas user voted for.  
+Manage user account: edit user settings, look through user ideas and votes.
 
 ![Settings](/static/img/_readme-img/settings.gif)
 
