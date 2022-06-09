@@ -34,8 +34,6 @@ To search for ideas I used msearch Flask extension to implement full-text search
 
 Look through idea details and commennts to an idea. User account registration is not required.
 
-![Idea details and comments](/static/img/_readme-img/idea-details.png)
-
 Look through ideas of certain user. User account registration is not required.
 
 ![User's ideas](/static/img/_readme-img/users-ideas.png)
