@@ -1,5 +1,3 @@
-"""Models for movie ratings app."""
-
 from datetime import datetime
 from flask import render_template, abort
 from flask_sqlalchemy import SQLAlchemy
