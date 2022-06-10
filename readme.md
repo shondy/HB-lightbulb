@@ -4,6 +4,8 @@
 Authorized users can create and update project ideas, create, update and delete comments, vote for project ideas.
 Also authorized users can change their settings, look through their ideas and votes, receive email notifications about added comments to their ideas.
 
+## Deployment
+Lightbulb was deployed on AWS using LightSail, public static IP address: 35.81.232.209
 
 ## Contents
 * [Tech Stack](#technologies)
